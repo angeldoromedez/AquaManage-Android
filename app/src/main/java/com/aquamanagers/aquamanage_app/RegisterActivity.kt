@@ -1,18 +1,22 @@
 package com.aquamanagers.aquamanage_app
+import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import com.google.firebase.FirebaseApp
+import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class RegisterActivity : AppCompatActivity() {
+
+    private lateinit var rootDatabaseref: DatabaseReference
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
-        FirebaseApp.initializeApp(this)
 
         val signUpButton: Button = findViewById(R.id.signup_button)
         val loginLink: TextView = findViewById(R.id.login_link)
@@ -23,35 +27,41 @@ class RegisterActivity : AppCompatActivity() {
         val password: EditText = findViewById(R.id.password)
         val confirmPassword: EditText = findViewById(R.id.confirm_password)
 
+        var firstNameInput: String?
+        var middleInitialInput: String?
+        var lastNameInput: String?
+        var emailInput: String?
+        var passwordInput: String?
+        var confirmPasswordInput: String?
+
         loginLink.setOnClickListener{
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
 
+        rootDatabaseref= FirebaseDatabase.getInstance().reference.child("Users")
 
         signUpButton.setOnClickListener{
-            val firstNameInput = firstName.text.toString().trim()
-            middleInitial.text.toString().trim()
-            val lastNameInput = lastName.text.toString().trim()
-            val emailInput = email.text.toString().trim()
-            val passwordInput = password.text.toString().trim()
-            val confirmPasswordInput = confirmPassword.text.toString().trim()
+            firstNameInput = firstName.text.toString()
+            middleInitialInput = middleInitial.text.toString()
+            lastNameInput = lastName.text.toString()
+            emailInput = email.text.toString()
+            passwordInput = password.text.toString()
+            confirmPasswordInput = confirmPassword.text.toString()
 
-            if (firstNameInput.isEmpty() || lastNameInput.isEmpty() || emailInput.isEmpty() || passwordInput.isEmpty() || confirmPasswordInput.isEmpty()) {
+            val userHash = hashMapOf("First Name" to firstNameInput, "Last Name " to lastNameInput,
+                "Middle Initial" to middleInitialInput, "Email" to emailInput, "Password" to passwordInput)
 
-                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
-            }
-            if (passwordInput != confirmPasswordInput) {
-                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
-            }
-            else {
-                Toast.makeText(this, "Sign-up complete!", Toast.LENGTH_SHORT).show()
+            rootDatabaseref.push().setValue(userHash).addOnSuccessListener { _ ->
+                Toast.makeText(this, "Sign-up complete!", Toast.LENGTH_LONG).show()
                 lastName.setText("")
                 firstName.setText("")
                 middleInitial.setText("")
                 email.setText("")
                 password.setText("")
                 confirmPassword.setText("")
+            }.addOnFailureListener{_ ->
+                Toast.makeText(this, "Something went wrong :(", Toast.LENGTH_SHORT).show()
             }
         }
     }

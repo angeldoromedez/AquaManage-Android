@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,7 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:src="@drawable/bg"
-        android:scaleType="fitXY"/>
+        android:scaleType="fitXY"
+        tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/logo"
@@ -17,7 +19,8 @@
         android:layout_height="150dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:src="@drawable/amlogo" />
+        android:src="@drawable/amlogo"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/title"
@@ -28,7 +31,8 @@
         android:text="Create New Account"
         android:textSize="40sp"
         android:textColor="#FF000000"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/login_link"
@@ -39,7 +43,8 @@
         android:layout_marginTop="10dp"
         android:text="Already have an account? Login here."
         android:textColor="#FF0000FF"
-        android:textSize="17sp"/>
+        android:textSize="17sp"
+        tools:ignore="HardcodedText" />
 
     <LinearLayout
         android:id="@+id/name_container"
@@ -60,7 +65,8 @@
             android:padding="15dp"
             android:background="@drawable/edittext_background"
             android:textColorHint="#FF000000"
-            android:inputType="text"/>
+            android:inputType="text"
+            tools:ignore="Autofill,HardcodedText" />
 
         <!-- Middle Initial EditText -->
         <EditText
@@ -68,12 +74,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:hint="MI"
             android:padding="15dp"
             android:background="@drawable/edittext_background"
             android:textColorHint="#FF000000"
-            android:inputType="text"/>
+            android:inputType="text"
+            tools:ignore="Autofill,HardcodedText" />
     </LinearLayout>
 
     <EditText
@@ -88,7 +95,8 @@
         android:padding="15dp"
         android:background="@drawable/edittext_background"
         android:textColorHint="#FF000000"
-        android:inputType="text"/>
+        android:inputType="text"
+        tools:ignore="Autofill,HardcodedText" />
 
     <EditText
         android:id="@+id/email"
@@ -102,7 +110,8 @@
         android:padding="15dp"
         android:background="@drawable/edittext_background"
         android:textColorHint="#FF000000"
-        android:inputType="textEmailAddress"/>
+        android:inputType="textEmailAddress"
+        tools:ignore="Autofill,HardcodedText" />
 
     <EditText
         android:id="@+id/password"
@@ -116,7 +125,9 @@
         android:padding="15dp"
         android:background="@drawable/edittext_background"
         android:textColorHint="#FF000000"
-        android:inputType="textPassword"/>
+        android:inputType="textPassword"
+        tools:ignore="HardcodedText"
+        android:importantForAutofill="no" />
 
     <EditText
         android:id="@+id/confirm_password"
@@ -130,7 +141,9 @@
         android:padding="15dp"
         android:background="@drawable/edittext_background"
         android:textColorHint="#FF000000"
-        android:inputType="textPassword"/>
+        android:inputType="textPassword"
+        android:autofillHints="******"
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/signup_button"
@@ -145,5 +158,6 @@
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
         android:paddingTop="10dp"
-        android:paddingBottom="10dp" />
+        android:paddingBottom="10dp"
+        tools:ignore="HardcodedText" />
 </RelativeLayout>

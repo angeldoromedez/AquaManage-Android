@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "140767694516",
-    "project_id": "aquamanage-bdca1",
-    "storage_bucket": "aquamanage-bdca1.appspot.com"
+    "project_number": "347938216400",
+    "firebase_url": "https://aquamanagemobile-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "aquamanagemobile",
+    "storage_bucket": "aquamanagemobile.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:140767694516:android:d0536f9982fd757b71d1e1",
+        "mobilesdk_app_id": "1:347938216400:android:04c98bf20485029dca01d5",
         "android_client_info": {
           "package_name": "com.aquamanagers.aquamanage_app"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAmDZx5E5khIdPfw8DSmCbf9v3Mu9YDGF4"
+          "current_key": "AIzaSyDLS_Lt1NpaMbpc8pK5wyuIBJbcyAUkJOM"
         }
       ],
       "services": {
