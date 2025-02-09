@@ -88,7 +88,7 @@
                 android:layout_height="100dp"
                 android:contentDescription="@string/add_button"
                 android:foregroundGravity="center"
-                android:src="@drawable/add_button"/>
+               android:src="@drawable/add_button"/>
 
         </RelativeLayout>
 
