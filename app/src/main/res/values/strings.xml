@@ -9,4 +9,11 @@
     <string name="wave_image">Wave image</string>
     <string name="password_hint">password</string>
     <string name="email_hint">email</string>
+    <string name="app_logo">App logo</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="profile_name">Angel Dorothy</string>
+    <string name="profile_photo_description">Fetches the user\'s profile photo</string>
+    <string name="add_button">Add button</string>
+    <string name="history_image_view">History image view</string>
+    <string name="bell_notification_icon">Bell notification icon</string>
 </resources>
