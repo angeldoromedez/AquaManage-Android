@@ -17,42 +17,41 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true" />
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/bell_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:contentDescription="@string/bell_notification_icon"
+        android:src="@drawable/notification"
+        android:layout_gravity="center_vertical"
+        android:layout_alignBottom="@id/history_icon"
+        android:layout_toStartOf="@id/profile_name"
+        android:layout_marginEnd="1dp" />
+
+    <TextView
+        android:id="@+id/profile_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:text="@string/profile_name"
+        android:textSize="15sp"
+        android:textColor="#000000"
+        android:layout_gravity="center_vertical"
+        android:layout_toStartOf="@id/profile_icon"
+        android:layout_alignBottom="@id/history_icon"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="5dp" />
+
+    <ImageView
+        android:id="@+id/profile_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/profile_photo_description"
+        android:layout_alignBottom="@id/history_icon"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        tools:ignore="RelativeOverlap">
-
-        <ImageView
-            android:id="@+id/bell_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:contentDescription="@string/bell_notification_icon"
-            android:src="@drawable/notification"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="15dp" />
-
-        <TextView
-            android:id="@+id/profile_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/profile_name"
-            android:textSize="15sp"
-            android:textColor="#000000"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="8dp" />
-
-        <ImageView
-            android:id="@+id/profile_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:contentDescription="@string/profile_photo_description"
-            android:src="@drawable/profile"
-            android:layout_gravity="center_vertical" />
-    </LinearLayout>
+        android:src="@drawable/profile"
+        tools:ignore="ImageContrastCheck" />
 
     <TextView
         android:id="@+id/dashboard_title"
@@ -88,7 +87,8 @@
                 android:layout_height="100dp"
                 android:contentDescription="@string/add_button"
                 android:foregroundGravity="center"
-               android:src="@drawable/add_button"/>
+                android:src="@drawable/add_button"
+                tools:ignore="RedundantDescriptionCheck" />
 
         </RelativeLayout>
 
