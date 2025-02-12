@@ -1,4 +1,4 @@
-package com.aquamanagers.aquamanage_app.Models
+package com.aquamanagers.aquamanage_app.models
 
 data class Users(
     val firstName:String? = null,
@@ -6,7 +6,5 @@ data class Users(
     val lastName:String? = null,
     val email:String? = null,
     val username: String?,
-    val password: String? = null){
-
-}
+    val password: String? = null)
 
