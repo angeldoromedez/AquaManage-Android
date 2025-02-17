@@ -16,6 +16,17 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true" />
 
+    <ImageView
+        android:id="@+id/add_device"
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/add_device" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,7 +38,7 @@
         <ImageView
             android:id="@+id/bell_icon"
             android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:src="@drawable/notification"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="15dp" />
