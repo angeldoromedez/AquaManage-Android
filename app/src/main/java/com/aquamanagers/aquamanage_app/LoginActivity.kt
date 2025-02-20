@@ -27,8 +27,9 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val currentUser = firebaseAuth.currentUser
-        if(currentUser!=null){
+        val loggedUser = firebaseAuth.currentUser
+        if(loggedUser!=null){
+            Toast.makeText(this, "Welcome back, ${loggedUser.displayName}", Toast.LENGTH_SHORT).show()
             reload()
         }
 
@@ -44,7 +45,8 @@ class LoginActivity : AppCompatActivity() {
             if(email.isNotBlank() && password.isNotBlank()){
                 firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener{
                     if(it.isSuccessful){
-                        Toast.makeText(this, "Welcome back, $email", Toast.LENGTH_SHORT).show()
+                        val currentUser = firebaseAuth.currentUser
+                        Toast.makeText(this, "Welcome back, ${currentUser?.displayName}", Toast.LENGTH_SHORT).show()
                         val intent = Intent(this, DashboardActivity::class.java)
                         startActivity(intent)
                     } else{

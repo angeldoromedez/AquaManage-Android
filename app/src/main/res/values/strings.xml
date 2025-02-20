@@ -16,4 +16,8 @@
     <string name="add_button">Add button</string>
     <string name="history_image_view">History image view</string>
     <string name="bell_notification_icon">Bell notification icon</string>
+    <string name="add_device_button">Add device button</string>
+    <string name="notification_profile_container">Container for notification and profile icon and name</string>
+    <string name="history_icon">History icon</string>
+    <string name="profile_icon">Profile icon</string>
 </resources>

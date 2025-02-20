@@ -38,22 +38,22 @@ class RegisterActivity : AppCompatActivity() {
             val email = binding.email.text.toString()
             val password = binding.password.text.toString()
             val confirmPassword = binding.confirmPassword.text.toString()
-            val index = email.lastIndexOf("@")
-            val username = if(index != 1) email.substring(0, index) else email
-
-            database = FirebaseDatabase.getInstance().getReference("Users")
-            val user = Users(firstName, middleInitial, lastName, email, username, password)
 
             if(firstName.isNotBlank() && middleInitial.isNotBlank() && lastName.isNotBlank() && email.isNotBlank() && password.isNotBlank() && confirmPassword.isNotBlank()){
                 if(password == confirmPassword){
                     firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener{
                         if(it.isSuccessful){
-                            database.child(username).setValue(user).addOnSuccessListener {
-                                Toast.makeText(this, "Registration complete", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(this, LoginActivity::class.java)
-                                startActivity(intent)
-                            }.addOnFailureListener{
-                                Toast.makeText(this,"Something went wrong, please retry", Toast.LENGTH_SHORT).show()
+                            val userId = firebaseAuth.currentUser?.uid
+                            if (userId != null) {
+                                database = FirebaseDatabase.getInstance().getReference().child("Users")
+                                val user = Users(firstName, middleInitial, lastName, email, password)
+                                database.child(userId).setValue(user).addOnSuccessListener {
+                                    Toast.makeText(this, "Registration complete", Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(this, LoginActivity::class.java)
+                                    startActivity(intent)
+                                }.addOnFailureListener{
+                                    Toast.makeText(this,"Something went wrong, please retry", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         } else{
                             Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
