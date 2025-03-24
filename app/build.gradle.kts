@@ -6,13 +6,13 @@ plugins {
 
 android {
     namespace = "com.aquamanagers.aquamanage_app"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.aquamanagers.aquamanage_app"
         minSdk = 24
-        //noinspection OldTargetApi
-        targetSdk = 34
+        //noinspection EditedTargetSdkVersion,OldTargetApi
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -49,9 +49,13 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-database-ktx:21.0.0")
+    implementation("androidx.activity:activity-ktx:1.8.0")
+    implementation("androidx.media3:media3-common-ktx:1.5.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
     implementation("androidx.core:core-splashscreen:1.0.0")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("com.google.zxing:core:3.4.1")
 }

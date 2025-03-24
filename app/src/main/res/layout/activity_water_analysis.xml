@@ -170,16 +170,17 @@
             android:layout_marginEnd="10dp"/>
 
         <!-- Start Button -->
-        <Button
-            android:id="@+id/btnStart"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
-            android:text="Start Treatment"
-            android:textColor="@android:color/white"
-            android:background="@drawable/rounded_button"
-            android:layout_marginEnd="10dp"/>
 
         <!-- Stop Button -->
+        <Button
+            android:id="@+id/btn_Start"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/rounded_button"
+            android:text="Start Treatment"
+            android:textColor="@android:color/white" />
+
         <Button
             android:id="@+id/btnStop"
             android:layout_width="100dp"

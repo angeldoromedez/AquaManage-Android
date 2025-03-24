@@ -20,4 +20,5 @@
     <string name="notification_profile_container">Container for notification and profile icon and name</string>
     <string name="history_icon">History icon</string>
     <string name="profile_icon">Profile icon</string>
+    <string name="continue_with_facebook">Continue with Facebook</string>
 </resources>
