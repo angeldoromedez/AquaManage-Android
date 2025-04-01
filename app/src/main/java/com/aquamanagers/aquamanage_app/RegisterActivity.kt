@@ -1,11 +1,11 @@
 package com.aquamanagers.aquamanage_app
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.aquamanagers.aquamanage_app.models.Users
+import androidx.appcompat.app.AppCompatActivity
 import com.aquamanagers.aquamanage_app.databinding.ActivityRegisterBinding
+import com.aquamanagers.aquamanage_app.models.Users
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -17,6 +17,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var binding:ActivityRegisterBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var database: DatabaseReference
+    private lateinit var devicesRef: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,17 +44,23 @@ class RegisterActivity : AppCompatActivity() {
                 if(password == confirmPassword){
                     firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener{
                         if(it.isSuccessful){
-                            val userId = firebaseAuth.currentUser?.uid
-                            if (userId != null) {
-                                database = FirebaseDatabase.getInstance().getReference().child("Users")
-                                val user = Users(firstName, middleInitial, lastName, email, password)
-                                database.child(userId).setValue(user).addOnSuccessListener {
+                            val userId = firebaseAuth.currentUser!!.uid
+                            database = FirebaseDatabase.getInstance().getReference().child("Users")
+                            val user = Users(firstName, middleInitial, lastName, email, password)
+
+                            database.child(userId).setValue(user).addOnSuccessListener {
+                                devicesRef = FirebaseDatabase.getInstance().getReference().child("registry")
+                                val registryData = emptyMap<String, Boolean>()
+
+                                devicesRef.child(userId).setValue(registryData).addOnSuccessListener{
                                     Toast.makeText(this, "Registration complete", Toast.LENGTH_SHORT).show()
                                     val intent = Intent(this, LoginActivity::class.java)
                                     startActivity(intent)
                                 }.addOnFailureListener{
-                                    Toast.makeText(this,"Something went wrong, please retry", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this,"Failed to add an empty device set",Toast.LENGTH_SHORT).show()
                                 }
+                            }.addOnFailureListener{
+                                Toast.makeText(this,"Something went wrong, please retry", Toast.LENGTH_SHORT).show()
                             }
                         } else{
                             Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()

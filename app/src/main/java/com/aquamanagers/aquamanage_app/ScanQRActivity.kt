@@ -58,17 +58,16 @@ class ScanQRActivity: AppCompatActivity() {
     }
 
     private val scanLauncher = registerForActivityResult(ScanContract()){ result: ScanIntentResult ->
-        run {
             if (result.contents == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show()
+                setResult(RESULT_CANCELED)
                 finish()
             } else {
                 checkResult(result.contents)
             }
-        }
     }
 
-    private fun setResult(string:String) {
+    private fun fetchDeviceData(string:String) {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if(currentUser != null) {
             val userId = currentUser.uid
@@ -86,13 +85,14 @@ class ScanQRActivity: AppCompatActivity() {
                     val resultIntent = Intent().apply{
                         putExtra("scannedData", newItem)
                     }
-                    setResult(RESULT_OK , resultIntent)
+                    setResult(RESULT_OK, resultIntent)
+                    finish()
                 } else {
                     val newItem = DeviceItem(string, "0", "0", "0")
                     val resultIntent = Intent().apply{
                         putExtra("scannedData", newItem)
                     }
-                    setResult(RESULT_OK , resultIntent)
+                    setResult(RESULT_OK, resultIntent)
                 }
                 finish()
             }.addOnFailureListener{ e ->
@@ -117,9 +117,9 @@ class ScanQRActivity: AppCompatActivity() {
                             Toast.makeText(this, "This device is linked to a different account", Toast.LENGTH_SHORT).show()
                             finish()
                         } else
-                            setResult(string)
+                            fetchDeviceData(string)
                     }
-            } else{
+            } else if(!snapshot.exists()){
                 Toast.makeText(this, "Device QR unrecognized.", Toast.LENGTH_SHORT).show()
                 finish()
             }
