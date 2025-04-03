@@ -46,36 +46,36 @@
         android:textSize="15sp"
         android:textColor="#000000"/>
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_below="@id/login_subtitle"
         android:layout_marginTop="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:autofillHints="username"
-        android:hint="@string/email_hint"
+        android:layout_marginHorizontal="30dp"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/poppins_bold"
+        android:text="@string/continue_with_facebook"
         android:padding="10dp"
         android:background="@drawable/edittext_background"
-        android:textColorHint="#FF000000"
-        android:inputType = "text"
+        android:backgroundTint="@color/facebook_blue"
         tools:ignore="TextFields" />
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_below="@id/email"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:autofillHints="****"
-        android:hint="@string/password_hint"
-        android:padding="10dp"
+        android:layout_marginHorizontal="30dp"
+        android:textAllCaps="false"
+        android:textColor="#000000"
+        android:fontFamily="@font/poppins_bold"
+        android:text="I'll use email or phone"
         android:background="@drawable/edittext_background"
-        android:textColorHint="#FF000000"
-        android:inputType="textPassword" />
+        android:padding="10dp"
+        android:backgroundTint="#C3DDDA" />
 
     <Button
         android:id="@+id/login_button"

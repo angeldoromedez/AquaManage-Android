@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">AquaManage_App</string>
+    <string name="login_background">Login display background image.</string>
+    <string name="signup_link">Don\'t have an account yet? Sign up.</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="login_button">Login</string>
+    <string name="sign_in_to_continue">Sign in to continue</string>
+    <string name="login_title">LOGIN</string>
+    <string name="wave_image">Wave image</string>
+    <string name="password_hint">password</string>
+    <string name="email_hint">email</string>
+    <string name="app_logo">App logo</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="profile_name">Angel Dorothy</string>
+    <string name="profile_photo_description">Fetches the user\'s profile photo</string>
+    <string name="add_button">Add button</string>
+    <string name="history_image_view">History image view</string>
+    <string name="bell_notification_icon">Bell notification icon</string>
+    <string name="add_device_button">Add device button</string>
+    <string name="notification_profile_container">Container for notification and profile icon and name</string>
+    <string name="history_icon">History icon</string>
+    <string name="profile_icon">Profile icon</string>
+    <string name="continue_with_facebook">Continue with Facebook</string>
 </resources>
