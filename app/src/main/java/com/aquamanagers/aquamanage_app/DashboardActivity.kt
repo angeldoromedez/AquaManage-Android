@@ -68,9 +68,7 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
         reloadDevices()
 
         binding.profileIcon.setOnClickListener{
-            firebaseAuth.signOut()
-            val intent = Intent(this, ProfileActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this,ProfileActivity::class.java))
         }
 
         binding.profileName.setOnClickListener{
