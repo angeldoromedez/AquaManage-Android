@@ -17,7 +17,6 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var binding:ActivityRegisterBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var database: DatabaseReference
-    private lateinit var devicesRef: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,18 +46,11 @@ class RegisterActivity : AppCompatActivity() {
                             val userId = firebaseAuth.currentUser!!.uid
                             database = FirebaseDatabase.getInstance().getReference().child("Users")
                             val user = Users(firstName, middleInitial, lastName, email, password)
-
+                            
                             database.child(userId).setValue(user).addOnSuccessListener {
-                                devicesRef = FirebaseDatabase.getInstance().getReference().child("registry")
-                                val registryData = emptyMap<String, Boolean>()
-
-                                devicesRef.child(userId).setValue(registryData).addOnSuccessListener{
-                                    Toast.makeText(this, "Registration complete", Toast.LENGTH_SHORT).show()
-                                    val intent = Intent(this, LoginActivity::class.java)
-                                    startActivity(intent)
-                                }.addOnFailureListener{
-                                    Toast.makeText(this,"Failed to add an empty device set",Toast.LENGTH_SHORT).show()
-                                }
+                                Toast.makeText(this, "Registration complete", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this, LoginActivity::class.java)
+                                startActivity(intent)
                             }.addOnFailureListener{
                                 Toast.makeText(this,"Something went wrong, please retry", Toast.LENGTH_SHORT).show()
                             }
