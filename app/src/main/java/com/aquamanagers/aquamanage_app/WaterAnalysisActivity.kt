@@ -36,4 +36,10 @@ class WaterAnalysisActivity : AppCompatActivity() {
                 .child("controls").setValue(1)
         }
     }
+
+    private fun stopTreatment(btn: Button) {
+        btn.setOnClickListener{
+            FirebaseDatabase.getInstance().getReference("esp32").child("ESP32-FD49F8").child("controls").setValue(0)
+        }
+    }
 }

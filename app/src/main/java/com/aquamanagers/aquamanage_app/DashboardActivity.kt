@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
+import java.util.Random
 import java.util.concurrent.CompletableFuture
 
 class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickListener {
@@ -225,11 +226,12 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
     }
 
     private fun addDeviceRegistry(userId: String, deviceId: String) {
-        val regItem = DeviceRegistry(true)
+        val customDeviceId = generateCustomDeviceId()
+        val deviceName = "Device 1"
+        val regItem = DeviceRegistry(true, customDeviceId, deviceName)
         registryRef = FirebaseDatabase.getInstance().getReference("registry")
         database = FirebaseDatabase.getInstance().getReference("esp32")
-        val thisDeviceRegistryRef =
-            FirebaseDatabase.getInstance().getReference("registry").child(userId).child(deviceId)
+        val thisDeviceRegistryRef = FirebaseDatabase.getInstance().getReference("registry").child(userId).child(deviceId)
 
         thisDeviceRegistryRef.get().addOnSuccessListener { thisRegSnapshot ->
             registryRef.get().addOnSuccessListener { regSnapshot ->
@@ -273,8 +275,15 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                             else {
                                 database.child(deviceId).get()
                                     .addOnSuccessListener { deviceSnapshot ->
-                                        if (deviceSnapshot.exists())
-                                            fetchDeviceData(deviceId)
+                                        if (deviceSnapshot.exists()){
+                                            registryRef.child(userId).child(deviceId).setValue(regItem)
+                                                .addOnSuccessListener{
+                                                    fetchDeviceData(deviceId)
+                                                    Toast.makeText(this,"Device added to registry",Toast.LENGTH_SHORT).show()
+                                                }.addOnFailureListener{ e->
+                                                    Toast.makeText(this, "Error in registering device to registry: ${e.message}",Toast.LENGTH_SHORT).show()
+                                                }
+                                        }
                                         else if (!deviceSnapshot.exists())
                                             Toast.makeText(
                                                 this,
@@ -282,21 +291,7 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         else {
-                                            registryRef.child(userId).child(deviceId)
-                                                .setValue(regItem)
-                                                .addOnSuccessListener {
-                                                    Toast.makeText(
-                                                        this,
-                                                        "Device added to registry",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }.addOnFailureListener { e ->
-                                                    Toast.makeText(
-                                                        this,
-                                                        "Error in registering device to registry: ${e.message}",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }
+                                            Toast.makeText(this, "Error",Toast.LENGTH_SHORT).show()
                                         }
                                     }
                             }
@@ -325,6 +320,15 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
             Toast.makeText(this, "Error fetching device data: ${e.message}", Toast.LENGTH_SHORT)
                 .show()
         }
+    }
+
+    private fun generateCustomDeviceId(): String {
+        val allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        val random = Random()
+        val length = 8
+        return (1..length)
+            .map { allowedChars[random.nextInt(allowedChars.length)] }
+            .joinToString("")
     }
 
     override fun onItemClick(item: DeviceItem) {

@@ -56,10 +56,21 @@
             android:backgroundTint="#b8dcf3"
             android:layout_margin="5dp">
             <TextView
+                android:id="@+id/phValueLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:text="PH"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/dark_blue"
+                />
+            <TextView
                 android:id="@+id/phValue"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="PH"
                 android:textColor="@color/dark_blue"
                 android:textSize="18sp"
@@ -74,10 +85,21 @@
             android:backgroundTint="#b8dcf3"
             android:layout_margin="5dp">
             <TextView
+                android:id="@+id/tdsValueLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:text="TDS"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/dark_blue"
+                />
+            <TextView
                 android:id="@+id/tdsValue"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="TDS"
                 android:textColor="@color/dark_blue"
                 android:textSize="18sp"
@@ -92,10 +114,21 @@
             android:backgroundTint="#b8dcf3"
             android:layout_margin="5dp">
             <TextView
-                android:id="@+id/ntuValue"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
+                android:id="@+id/turbidityValueLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:text="PH"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/dark_blue"
+                />
+            <TextView
+                android:id="@+id/turbidityValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="NTU"
                 android:textColor="@color/dark_blue"
                 android:textSize="18sp"
