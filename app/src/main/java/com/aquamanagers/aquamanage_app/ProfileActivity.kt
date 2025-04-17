@@ -33,6 +33,14 @@ class ProfileActivity : AppCompatActivity() {
             })
             finish()
         }
+
+        binding.changePassButton.setOnClickListener {
+            startActivity(Intent(this, ChangePassword::class.java))
+        }
+
+        binding .backArrow.setOnClickListener {
+            finish()
+        }
     }
 
     private fun fetchUserData() {

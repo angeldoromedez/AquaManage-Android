@@ -1,9 +1,10 @@
 package com.aquamanagers.aquamanage_app.models
 
 data class Users(
-    val firstName:String? = null,
-    val middleInitial:String? = null,
-    val lastName:String? = null,
-    val email:String? = null,
-    val password: String? = null )
+    val firstName: String = "",
+    val middleInitial: String = "",
+    val lastName: String = "",
+    val email: String = "",
+    val customUID: String = "",
+    val createdAt: Long = 0L)
 

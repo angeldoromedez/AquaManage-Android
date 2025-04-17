@@ -1,7 +1,10 @@
 package com.aquamanagers.aquamanage_app
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
+import android.view.MotionEvent
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.aquamanagers.aquamanage_app.databinding.ActivityRegisterBinding
@@ -15,7 +18,10 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var database: DatabaseReference
+    private var isPasswordVisible = false
+    private var isConfirmPasswordVisible = false
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,9 +47,68 @@ class RegisterActivity : AppCompatActivity() {
                 registerUser(firstName, middleInitial, lastName, email, password)
             }
         }
+
+        // Toggle password visibility
+        binding.password.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                val drawableEnd = 2
+                val drawable = binding.password.compoundDrawables[drawableEnd]
+
+                if (drawable != null && event.rawX >= (binding.password.right - drawable.bounds.width() - binding.password.paddingEnd)) {
+                    binding.password.performClick()
+                    isPasswordVisible = !isPasswordVisible
+                    togglePasswordVisibility()
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
+
+        // Toggle confirm password visibility
+        binding.confirmPassword.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                val drawableEnd = 2
+                val drawable = binding.confirmPassword.compoundDrawables[drawableEnd]
+
+                if (drawable != null && event.rawX >= (binding.confirmPassword.right - drawable.bounds.width() - binding.confirmPassword.paddingEnd)) {
+                    binding.confirmPassword.performClick()
+                    isConfirmPasswordVisible = !isConfirmPasswordVisible
+                    toggleConfirmPasswordVisibility()
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
     }
 
-    private fun validateInput(firstName: String, lastName: String, email: String, password: String, confirmPassword: String): Boolean {
+    private fun togglePasswordVisibility() {
+        binding.password.inputType = if (isPasswordVisible)
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        else
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+
+        binding.password.typeface = binding.email.typeface
+        binding.password.setSelection(binding.password.text.length)
+        val icon = if (isPasswordVisible) R.drawable.ic_eye_open else R.drawable.ic_eye_closed
+        binding.password.setCompoundDrawablesWithIntrinsicBounds(0, 0, icon, 0)
+    }
+
+    private fun toggleConfirmPasswordVisibility() {
+        binding.confirmPassword.inputType = if (isConfirmPasswordVisible)
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        else
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+
+        binding.confirmPassword.typeface = binding.email.typeface
+        binding.confirmPassword.setSelection(binding.confirmPassword.text.length)
+        val icon = if (isConfirmPasswordVisible) R.drawable.ic_eye_open else R.drawable.ic_eye_closed
+        binding.confirmPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, icon, 0)
+    }
+
+    private fun validateInput(
+        firstName: String, lastName: String, email: String,
+        password: String, confirmPassword: String
+    ): Boolean {
         if (firstName.isEmpty()) {
             binding.firstname.error = "First Name is required"
             return false
@@ -83,7 +148,10 @@ class RegisterActivity : AppCompatActivity() {
         return true
     }
 
-    private fun registerUser(firstName: String, middleInitial: String, lastName: String, email: String, password: String) {
+    private fun registerUser(
+        firstName: String, middleInitial: String, lastName: String,
+        email: String, password: String
+    ) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -93,33 +161,30 @@ class RegisterActivity : AppCompatActivity() {
 
                     if (authUid != null) {
                         database = FirebaseDatabase.getInstance().getReference("Users")
-
-                        // Generate the current timestamp (in milliseconds)
                         val createdAt = System.currentTimeMillis()
 
-                        // Create a new Users object including the createdAt timestamp
-                        val user = model.Users(
+                        val user = Users(
                             firstName = firstName,
                             middleInitial = middleInitial,
                             lastName = lastName,
                             email = email,
-                            password = password,
                             customUID = customUserId,
                             createdAt = createdAt
                         )
 
-                        database.child(authUid).setValue(user).addOnSuccessListener {
-                            Toast.makeText(this, "Registration successful. Please log in.", Toast.LENGTH_SHORT).show()
+                        database.child(authUid).setValue(user)
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "Registration successful. Please log in.", Toast.LENGTH_SHORT).show()
+                                firebaseAuth.signOut()
 
-                            firebaseAuth.signOut()
-
-                            val intent = Intent(this, LoginActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            startActivity(intent)
-                            finish()
-                        }.addOnFailureListener {
-                            Toast.makeText(this, "Error saving user data", Toast.LENGTH_SHORT).show()
-                        }
+                                val intent = Intent(this, LoginActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                startActivity(intent)
+                                finish()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this, "Error saving user data", Toast.LENGTH_SHORT).show()
+                            }
                     } else {
                         Toast.makeText(this, "Failed to get Auth UID", Toast.LENGTH_SHORT).show()
                     }
