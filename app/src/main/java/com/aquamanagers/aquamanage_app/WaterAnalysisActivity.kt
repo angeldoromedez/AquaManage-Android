@@ -1,6 +1,7 @@
 package com.aquamanagers.aquamanage_app
 
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.aquamanagers.aquamanage_app.databinding.ActivityWaterAnalysisBinding
 import com.aquamanagers.aquamanage_app.models.DeviceItem
@@ -21,14 +22,18 @@ class WaterAnalysisActivity : AppCompatActivity() {
 
         binding = ActivityWaterAnalysisBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        binding.btnStart.setOnClickListener{
-            FirebaseDatabase.getInstance().getReference("esp32").child("ESP32-FD49F8").child("controls").setValue(1)
-        }
+        val btn = binding.btnStart
 
         val deviceItem = intent.getParcelableExtra<DeviceItem>("deviceItem")
-        if(deviceItem!=null) {
-            //TODO
+        if (deviceItem != null) {
+            startTreatment(btn)
+        }
+    }
+
+    private fun startTreatment(btn: Button) {
+        btn.setOnClickListener {
+            FirebaseDatabase.getInstance().getReference("esp32").child("ESP32-FD49F8")
+                .child("controls").setValue(1)
         }
     }
 }

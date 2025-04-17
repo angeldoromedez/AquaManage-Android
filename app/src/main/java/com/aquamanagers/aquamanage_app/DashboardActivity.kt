@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture
 
 class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickListener {
     private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var devicesRef: DatabaseReference
+    private lateinit var registryRef: DatabaseReference
     private lateinit var database: DatabaseReference
     private lateinit var binding: ActivityDashboardBinding
     private lateinit var recyclerView: RecyclerView
@@ -44,11 +44,8 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
     @SuppressLint("NotifyDataSetChanged")
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                showCamera()
-            } else {
-                //TODO
-            }
+            if (isGranted) showCamera()
+            else Toast.makeText(this, "Camera permission required", Toast.LENGTH_SHORT).show()
         }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -85,7 +82,8 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
     private fun reloadDevices() {
         val currentUser = firebaseAuth.currentUser ?: return
         val userId = currentUser.uid
-        devicesRef = FirebaseDatabase.getInstance().getReference("registry")
+        registryRef = FirebaseDatabase.getInstance().getReference("registry")
+        database = FirebaseDatabase.getInstance().getReference("Users").child(userId)
 
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
@@ -96,9 +94,7 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                     binding.profileName.text = userName
                 } else {
                     Toast.makeText(
-                        this@DashboardActivity,
-                        "User data not found",
-                        Toast.LENGTH_SHORT
+                        this@DashboardActivity, "User data not found", Toast.LENGTH_SHORT
                     ).show()
                 }
             }
@@ -107,7 +103,7 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
             }
         })
 
-        devicesRef.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
+        registryRef.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun onDataChange(snapshot: DataSnapshot) {
                 items.clear()
@@ -128,9 +124,19 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                         .addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(espSnapshot: DataSnapshot) {
                                 val ph = espSnapshot.child("ph").getValue(Double::class.java) ?: 0.0
-                                val tds = espSnapshot.child("tds").getValue(Double::class.java) ?: 0.0
-                                val turbidity = espSnapshot.child("turbidity").getValue(Double::class.java) ?: 0.0
-                                items.add(DeviceItem(deviceId, ph.toString(), tds.toString(), turbidity.toString()))
+                                val tds =
+                                    espSnapshot.child("tds").getValue(Double::class.java) ?: 0.0
+                                val turbidity =
+                                    espSnapshot.child("turbidity").getValue(Double::class.java)
+                                        ?: 0.0
+                                items.add(
+                                    DeviceItem(
+                                        deviceId,
+                                        ph.toString(),
+                                        tds.toString(),
+                                        turbidity.toString()
+                                    )
+                                )
                                 future.complete(Unit)
                             }
 
@@ -140,150 +146,190 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                         })
                 }
 
-                CompletableFuture.allOf(*deviceLoadPromises.toTypedArray())
-                    .thenRun{
-                        runOnUiThread{
-                            adapter.notifyDataSetChanged()
+                CompletableFuture.allOf(*deviceLoadPromises.toTypedArray()).thenRun {
+                    runOnUiThread {
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@DashboardActivity, "Failed to load devices", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        })
+
+    }
+
+    private fun showAddDeviceDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_device, null)
+        val dialog = AlertDialog.Builder(this).setView(dialogView).setCancelable(true).create()
+
+        val closeButton: ImageView = dialogView.findViewById(R.id.close_button)
+        val qrScannerButton: Button = dialogView.findViewById(R.id.open_qr_scanner_button)
+
+        closeButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        qrScannerButton.setOnClickListener {
+            Toast.makeText(this, "Opening camera...", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+            scanQR()
+        }
+        dialog.show()
+    }
+
+    private fun scanQR() {
+        checkPermissionCamera(this)
+    }
+
+    private fun checkPermissionCamera(context: Context) {
+        if (ContextCompat.checkSelfPermission(
+                context, android.Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            showCamera()
+        } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA)) {
+            Toast.makeText(context, "Camera Permission Required", Toast.LENGTH_LONG).show()
+        } else requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+    }
+
+    private fun showCamera() {
+        val options = ScanOptions()
+        options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+        options.setPrompt("Scan QR Code")
+        options.setCameraId(0)
+        options.setBeepEnabled(true)
+        options.setBarcodeImageEnabled(true)
+        options.setOrientationLocked(false)
+
+        scanLauncher.launch(options)
+
+    }
+
+    private val scanLauncher =
+        registerForActivityResult(ScanContract()) { result: ScanIntentResult ->
+            if (result.contents == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show()
+                setResult(RESULT_CANCELED)
+                finish()
+            } else {
+                checkResult(result.contents)
+            }
+        }
+
+    private fun checkResult(deviceId: String) {
+        val userId = firebaseAuth.currentUser?.uid ?: return
+        addDeviceRegistry(userId, deviceId)
+    }
+
+    private fun addDeviceRegistry(userId: String, deviceId: String) {
+        val regItem = DeviceRegistry(true)
+        registryRef = FirebaseDatabase.getInstance().getReference("registry")
+        database = FirebaseDatabase.getInstance().getReference("esp32")
+        val thisDeviceRegistryRef =
+            FirebaseDatabase.getInstance().getReference("registry").child(userId).child(deviceId)
+
+        thisDeviceRegistryRef.get().addOnSuccessListener { thisRegSnapshot ->
+            registryRef.get().addOnSuccessListener { regSnapshot ->
+                var deviceAlreadyLinked = false
+                var deviceLinkedHere = false
+
+                for (userSnapshot in regSnapshot.children) {
+                    val userDevices = userSnapshot.children
+                    for (deviceSnapshot in userDevices) {
+                        if ((deviceSnapshot.key == deviceId) && (deviceSnapshot.key == thisRegSnapshot.toString())) {
+                            deviceLinkedHere = true
+                            break
+                        } else if (deviceSnapshot.key == deviceId) {
+                            deviceAlreadyLinked = true
+                            break
                         }
                     }
-            }
+                    if (deviceAlreadyLinked || deviceLinkedHere) break
+                }
 
-            override fun onCancelled(error: DatabaseError){
-                Toast.makeText(this@DashboardActivity, "Failed to load devices", Toast.LENGTH_SHORT).show()
-            }
-    })
 
-}
-
-private fun showAddDeviceDialog() {
-    val dialogView = layoutInflater.inflate(R.layout.dialog_add_device, null)
-    val dialog = AlertDialog.Builder(this)
-        .setView(dialogView)
-        .setCancelable(true)
-        .create()
-
-    val closeButton: ImageView = dialogView.findViewById(R.id.close_button)
-    val qrScannerButton: Button = dialogView.findViewById(R.id.open_qr_scanner_button)
-
-    closeButton.setOnClickListener {
-        dialog.dismiss()
-    }
-
-    qrScannerButton.setOnClickListener {
-        Toast.makeText(this, "Opening camera...", Toast.LENGTH_SHORT).show()
-        dialog.dismiss()
-        scanQR()
-    }
-    dialog.show()
-}
-
-private fun scanQR() {
-    checkPermissionCamera(this)
-}
-
-private fun checkPermissionCamera(context: Context) {
-    if (ContextCompat.checkSelfPermission(
-            context,
-            android.Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED
-    ) {
-        showCamera()
-    } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA)) {
-        Toast.makeText(context, "Camera Permission Required", Toast.LENGTH_LONG).show()
-    } else
-        requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-}
-
-private fun showCamera() {
-    val options = ScanOptions()
-    options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-    options.setPrompt("Scan QR Code")
-    options.setCameraId(0)
-    options.setBeepEnabled(true)
-    options.setBarcodeImageEnabled(true)
-    options.setOrientationLocked(false)
-
-    scanLauncher.launch(options)
-
-}
-
-private val scanLauncher =
-    registerForActivityResult(ScanContract()) { result: ScanIntentResult ->
-        if (result.contents == null) {
-            Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show()
-            setResult(RESULT_CANCELED)
-            finish()
-        } else {
-            checkResult(result.contents)
-        }
-    }
-
-private fun checkResult(deviceId: String) {
-    val userId = firebaseAuth.currentUser?.uid ?: return
-    addDeviceRegistry(userId, deviceId)
-
-    database = FirebaseDatabase.getInstance().getReference("esp32")
-    database.child(deviceId).get().addOnSuccessListener { snapshot ->
-        if (snapshot.exists()) {
-            fetchDeviceData(deviceId)
-        } else {
-            Toast.makeText(this, "Device QR unrecognized.", Toast.LENGTH_SHORT).show()
-        }
-    }.addOnFailureListener { e ->
-        Toast.makeText(this, e.message ?: "An error occurred", Toast.LENGTH_SHORT).show()
-    }
-
-}
-
-private fun fetchDeviceData(deviceId: String) {
-    val deviceReading = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId)
-    deviceReading.get().addOnSuccessListener { snapshot ->
-        val phValue = snapshot.child("ph").getValue(String::class.java) ?: "N/A"
-        val tdsValue = snapshot.child("tds").getValue(String::class.java) ?: "N/A"
-        val turbidityValue = snapshot.child("turbidity").getValue(String::class.java) ?: "N/A"
-
-        val newItem = DeviceItem(deviceId, phValue, tdsValue, turbidityValue)
-        adapter.addItem(newItem)
-        Toast.makeText(this, "Device added successfully", Toast.LENGTH_SHORT).show()
-    }.addOnFailureListener { e ->
-        Toast.makeText(this, "Error fetching device data: ${e.message}", Toast.LENGTH_SHORT)
-            .show()
-    }
-}
-
-private fun addDeviceRegistry(userId: String, deviceId: String) {
-    DeviceRegistry(true)
-    FirebaseDatabase.getInstance().getReference("registry")
-    val deviceIndexRef = FirebaseDatabase.getInstance().getReference("deviceIndex")
-
-    deviceIndexRef.child(deviceId).get().addOnSuccessListener { snapshot ->
-        when(snapshot.getValue(String::class.java)) {
-            null -> {
-                val updates = hashMapOf<String,Any>(
-                    "registry/$userId/$deviceId/connected" to true,
-                    "deviceIndex/$deviceId" to userId
-                )
-
-                FirebaseDatabase.getInstance().reference.updateChildren(updates)
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Device added successfully", Toast.LENGTH_SHORT).show()
-                    }.addOnFailureListener{ e->
-                        Toast.makeText(this, "Failed to add device: ${e.message}",Toast.LENGTH_SHORT).show()
+                if (deviceAlreadyLinked)
+                    Toast.makeText(
+                        this,
+                        "This device is already linked to another user",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                else if (deviceLinkedHere) Toast.makeText(
+                    this,
+                    "This device is already linked to this user",
+                    Toast.LENGTH_SHORT
+                ).show()
+                else {
+                    registryRef.child(userId).child(deviceId).get()
+                        .addOnSuccessListener { snapshot ->
+                            if (snapshot.exists()) Toast.makeText(
+                                this,
+                                "Device is already registered under this user",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            else {
+                                database.child(deviceId).get()
+                                    .addOnSuccessListener { deviceSnapshot ->
+                                        if (deviceSnapshot.exists())
+                                            fetchDeviceData(deviceId)
+                                        else if (!deviceSnapshot.exists())
+                                            Toast.makeText(
+                                                this,
+                                                "Device QR unrecognized.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        else {
+                                            registryRef.child(userId).child(deviceId)
+                                                .setValue(regItem)
+                                                .addOnSuccessListener {
+                                                    Toast.makeText(
+                                                        this,
+                                                        "Device added to registry",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }.addOnFailureListener { e ->
+                                                    Toast.makeText(
+                                                        this,
+                                                        "Error in registering device to registry: ${e.message}",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                        }
+                                    }
+                            }
+                        }.addOnFailureListener { e ->
+                        Toast.makeText(this, "Fetch failure: ${e.message}", Toast.LENGTH_SHORT)
+                            .show()
                     }
-            } userId -> {
-                Toast.makeText(this, "Device already registered to your account", Toast.LENGTH_SHORT).show()
-            } else -> {
-                Toast.makeText(this, "Device already linked to another account", Toast.LENGTH_SHORT).show()
+                }
             }
         }
-    }.addOnFailureListener{
-        Toast.makeText(this, "Failed to check device registration", Toast.LENGTH_SHORT).show()
     }
-}
 
-override fun onItemClick(item: DeviceItem) {
-    val intent = Intent(this, WaterAnalysisActivity::class.java)
-    intent.putExtra("deviceItem", item)
-    startActivity(intent)
-}
+    private fun fetchDeviceData(deviceId: String) {
+        val deviceReading = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId)
+        deviceReading.get().addOnSuccessListener { snapshot ->
+            val phValue = snapshot.child("ph").getValue(Float::class.java) ?: "N/A"
+            val tdsValue = snapshot.child("tds").getValue(Float::class.java) ?: "N/A"
+            val turbidityValue = snapshot.child("turbidity").getValue(Float::class.java) ?: "N/A"
+
+            val newItem = DeviceItem(
+                deviceId, phValue.toString(), tdsValue.toString(), turbidityValue.toString()
+            )
+            adapter.addItem(newItem)
+            Toast.makeText(this, "Device added successfully", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, "Error fetching device data: ${e.message}", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
+    override fun onItemClick(item: DeviceItem) {
+        val intent = Intent(this, WaterAnalysisActivity::class.java)
+        intent.putExtra("deviceItem", item)
+        startActivity(intent)
+    }
 }
