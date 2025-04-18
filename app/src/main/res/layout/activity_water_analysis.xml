@@ -192,19 +192,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp">
 
-        <!-- Pause Button -->
-        <Button
-            android:id="@+id/btnPause"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:text="PAUSE"
-            android:textColor="@android:color/white"
-            android:background="@drawable/pause_button"
-            android:layout_marginEnd="10dp"/>
-
         <!-- Start Button -->
 
-        <!-- Stop Button -->
         <Button
             android:id="@+id/btn_Start"
             android:layout_width="150dp"
@@ -213,6 +202,8 @@
             android:background="@drawable/rounded_button"
             android:text="Start Treatment"
             android:textColor="@android:color/white" />
+
+        <!-- Stop Button -->
 
         <Button
             android:id="@+id/btnStop"
