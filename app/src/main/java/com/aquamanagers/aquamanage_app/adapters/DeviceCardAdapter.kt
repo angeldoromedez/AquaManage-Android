@@ -18,7 +18,6 @@ class DeviceCardAdapter(
     }
 
     class ViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView){
-        val id: TextView = itemView.findViewById(R.id.deviceName)
         val phValue: TextView = itemView.findViewById(R.id.phValueHolder)
         val tdsValue: TextView = itemView.findViewById(R.id.tdsValueHolder)
         val turbidityValue: TextView = itemView.findViewById(R.id.turbidityValueHolder)

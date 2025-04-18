@@ -1,6 +1,7 @@
 package com.aquamanagers.aquamanage_app
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.aquamanagers.aquamanage_app.databinding.ActivityWaterAnalysisBinding
 import com.aquamanagers.aquamanage_app.models.DeviceItem
@@ -31,10 +32,15 @@ class WaterAnalysisActivity : AppCompatActivity() {
         val turDeviceItem = deviceItem.turbidityValue
 
         val deviceRegistry =
-            FirebaseDatabase.getInstance().getReference("registry").child(userId).child(deviceId)
-        val deviceName = deviceRegistry.child("deviceName").get().toString()
+            FirebaseDatabase.getInstance().getReference("registry").child(userId).child(deviceId).child("deviceName")
 
-        binding.deviceTitle.text = deviceName
+        deviceRegistry.get().addOnSuccessListener { snapshot->
+            val deviceName = snapshot.getValue(String::class.java)
+            binding.deviceTitle.text = deviceName ?: "Device 1"
+        }.addOnFailureListener{ e->
+            Toast.makeText(this,"Failure to fetch name: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+
         binding.phValue.text = phDeviceItem
         binding.tdsValue.text = tdsDeviceItem
         binding.turbidityValue.text = turDeviceItem

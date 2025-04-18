@@ -68,6 +68,17 @@
         android:layout_marginTop="32dp"
         android:layout_marginStart="20dp" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/newDevice"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"
+        android:layout_below="@id/dashboard_title"
+        card_view:cardCornerRadius="40dp"
+        android:visibility="gone"
+        />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/button_holder"
         android:layout_width="300dp"
@@ -75,7 +86,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="6dp"
         android:layout_marginTop="20dp"
-        android:layout_below="@id/dashboard_title"
+        android:layout_below="@id/newDevice"
         card_view:cardCornerRadius="40dp">
 
         <androidx.appcompat.widget.AppCompatButton
@@ -85,17 +96,9 @@
             android:background="@drawable/add_device"
             android:drawablePadding="50dp"
             android:textSize="50sp"
+            android:gravity="center"
             tools:ignore="SpeakableTextPresentCheck" />
     </androidx.cardview.widget.CardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/newDevice"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="20dp"
-        android:layout_below="@id/button_holder"
-        card_view:cardCornerRadius="40dp"
-        />
 
 </RelativeLayout>

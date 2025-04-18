@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
@@ -138,6 +139,7 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                                         turbidity.toString()
                                     )
                                 )
+                                binding.newDevice.visibility = View.VISIBLE
                                 future.complete(Unit)
                             }
 
@@ -279,6 +281,7 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                                             registryRef.child(userId).child(deviceId).setValue(regItem)
                                                 .addOnSuccessListener{
                                                     fetchDeviceData(deviceId)
+                                                    binding.newDevice.visibility = View.VISIBLE
                                                     Toast.makeText(this,"Device added to registry",Toast.LENGTH_SHORT).show()
                                                 }.addOnFailureListener{ e->
                                                     Toast.makeText(this, "Error in registering device to registry: ${e.message}",Toast.LENGTH_SHORT).show()
