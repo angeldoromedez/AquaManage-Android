@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
@@ -6,8 +7,8 @@
     android:tint="@color/blue"
     android:autoMirrored="true">
 
-    <!-- Less-than symbol "<" -->
+    <!-- Greater-than symbol ">" -->
     <path
         android:fillColor="@android:color/white"
-        android:pathData="M15.5,5.5 L8.5,12 L15.5,18.5 L14,20 L6,12 L14,4 Z"/>
+        android:pathData="M8.5,5.5 L15.5,12 L8.5,18.5 L10,20 L18,12 L10,4 Z"/>
 </vector>

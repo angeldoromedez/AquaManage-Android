@@ -21,11 +21,13 @@
     <string name="history_icon">History icon</string>
     <string name="profile_icon">Profile icon</string>
     <string name="continue_with_facebook">Continue with Facebook</string>
+    <string name="login_text">Already have an account? <u><font color='#006fb1'>Login here.</font></u></string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
