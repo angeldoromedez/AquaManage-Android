@@ -22,7 +22,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
         binding = ActivityWaterAnalysisBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val userId = firebaseAuth.currentUser?.uid?: return
+        val userId = firebaseAuth.currentUser?.uid ?: return
 
         val deviceItem = intent.getParcelableExtra<DeviceItem>("deviceItem")
         val deviceId = deviceItem!!.id
@@ -30,7 +30,8 @@ class WaterAnalysisActivity : AppCompatActivity() {
         val tdsDeviceItem = deviceItem.tdsValue
         val turDeviceItem = deviceItem.turbidityValue
 
-        val deviceRegistry = FirebaseDatabase.getInstance().getReference("registry").child(userId).child(deviceId)
+        val deviceRegistry =
+            FirebaseDatabase.getInstance().getReference("registry").child(userId).child(deviceId)
         val deviceName = deviceRegistry.child("deviceName").get().toString()
 
         binding.deviceTitle.text = deviceName
@@ -38,12 +39,14 @@ class WaterAnalysisActivity : AppCompatActivity() {
         binding.tdsValue.text = tdsDeviceItem
         binding.turbidityValue.text = turDeviceItem
 
-        binding.btnStart.setOnClickListener{
-            FirebaseDatabase.getInstance().getReference("esp32").child(deviceId).child("controls").setValue(1)
+        binding.btnStart.setOnClickListener {
+            FirebaseDatabase.getInstance().getReference("esp32").child(deviceId).child("controls")
+                .setValue(1)
         }
 
-        binding.btnStop.setOnClickListener{
-            FirebaseDatabase.getInstance().getReference("esp32").child(deviceId).child("controls").setValue(0)
+        binding.btnStop.setOnClickListener {
+            FirebaseDatabase.getInstance().getReference("esp32").child(deviceId).child("controls")
+                .setValue(0)
         }
     }
 }
