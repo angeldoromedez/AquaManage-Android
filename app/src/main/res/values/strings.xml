@@ -68,4 +68,9 @@
     <string name="back_arrow">Back arrow</string>
     <string name="technical_support">Technical Support</string>
     <string name="technical_support_logo">Technical support logo</string>
+    <string name="ph_level">pH Level:</string>
+    <string name="tds">TDS:</string>
+    <string name="turbidity">Turbidity:</string>
+    <string name="device_name">Device name</string>
+    <string name="_0">0</string>
 </resources>

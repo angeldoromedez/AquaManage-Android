@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
+    android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
     android:layout_margin="8dp"
     android:layout_marginStart="6dp"
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="3dp"
-        android:text="Device name"
+        android:text="@string/device_name"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginBottom="10dp"
-                android:text="pH Level: "
+                android:text="@string/ph_level"
                 android:textSize="18sp" />
 
             <TextView
@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginBottom="10dp"
-                android:text="TDS: "
+                android:text="@string/tds"
                 android:textSize="18sp" />
 
             <TextView
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginBottom="10dp"
-                android:text="Turbidity: "
+                android:text="@string/turbidity"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginBottom="10dp"
-                android:text="0 "
+                android:text="@string/_0"
                 android:textSize="18sp" />
 
             <TextView
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginBottom="10dp"
-                android:text="0"
+                android:text="@string/_0"
                 android:textSize="18sp" />
 
             <TextView
@@ -111,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginBottom="10dp"
-                android:text="0"
+                android:text="@string/_0"
                 android:textSize="18sp" />
         </LinearLayout>
     </LinearLayout>
