@@ -1,5 +1,6 @@
 package com.aquamanagers.aquamanage_app.adapters
 
+import android.text.style.BackgroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,12 +16,14 @@ class DeviceCardAdapter(
 
     interface OnItemClickListener{
         fun onItemClick(item:DeviceItem)
+        fun onItemLongClick(position: Int, item:DeviceItem)
     }
 
     class ViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView){
         val phValue: TextView = itemView.findViewById(R.id.phValueHolder)
         val tdsValue: TextView = itemView.findViewById(R.id.tdsValueHolder)
         val turbidityValue: TextView = itemView.findViewById(R.id.turbidityValueHolder)
+        val deviceName: TextView = itemView.findViewById(R.id.deviceTitleHolder)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -33,8 +36,20 @@ class DeviceCardAdapter(
         holder.phValue.text = item.phValue
         holder.tdsValue.text = item.tdsValue
         holder.turbidityValue.text = item.turbidityValue
+        holder.deviceName.text = item.deviceName
+
+        try{
+            holder.itemView.setBackgroundColor(android.graphics.Color.parseColor(item.colorHex))
+        }catch(e: IllegalArgumentException){
+            holder.itemView.setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
         holder.itemView.setOnClickListener{
             listener.onItemClick(item)
+        }
+        holder.itemView.setOnLongClickListener{
+            listener.onItemLongClick(holder.adapterPosition, item)
+            true
         }
     }
 
@@ -43,5 +58,10 @@ class DeviceCardAdapter(
     fun addItem(item: DeviceItem){
         items.add(item)
         notifyItemInserted(items.size-1)
+    }
+
+    fun updateItem(position: Int, newItem:DeviceItem){
+        items[position] = newItem
+        notifyItemChanged(position)
     }
 }

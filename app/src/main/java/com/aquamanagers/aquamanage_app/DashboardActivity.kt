@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +22,8 @@ import com.aquamanagers.aquamanage_app.databinding.ActivityDashboardBinding
 import com.aquamanagers.aquamanage_app.models.DeviceItem
 import com.aquamanagers.aquamanage_app.models.DeviceRegistry
 import com.aquamanagers.aquamanage_app.models.Users
+import com.flask.colorpicker.ColorPickerView
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -122,33 +126,42 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                     val future = CompletableFuture<Unit>()
                     deviceLoadPromises.add(future)
 
-                    FirebaseDatabase.getInstance().getReference("esp32").child(deviceId)
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(espSnapshot: DataSnapshot) {
-                                val ph = espSnapshot.child("ph").getValue(Double::class.java) ?: 0.0
-                                val tds =
-                                    espSnapshot.child("tds").getValue(Double::class.java) ?: 0.0
-                                val turbidity =
-                                    espSnapshot.child("turbidity").getValue(Double::class.java)
-                                        ?: 0.0
-                                items.add(
-                                    DeviceItem(
-                                        deviceId,
-                                        ph.toString(),
-                                        tds.toString(),
-                                        turbidity.toString()
-                                    )
+                    val deviceMetaRef = registryRef.child(userId).child(deviceId)
+                    val deviceReadingRef =
+                        FirebaseDatabase.getInstance().getReference("esp32").child(deviceId)
+
+                    deviceMetaRef.get().addOnSuccessListener { metaSnapshot ->
+                        val deviceName =
+                            metaSnapshot.child("deviceName").getValue(String::class.java)
+                                ?: "Device 1"
+                        val colorHex =
+                            metaSnapshot.child("deviceColor").getValue(String::class.java)
+                                ?: "#FFFFFF"
+
+                        deviceReadingRef.get().addOnSuccessListener { readingSnapshot ->
+                            val ph =
+                                readingSnapshot.child("ph").getValue(Double::class.java).toString()
+                            val tds =
+                                readingSnapshot.child("tds").getValue(Double::class.java).toString()
+                            val turbidity =
+                                readingSnapshot.child("turbidity").getValue(Double::class.java)
+                                    .toString()
+
+                            items.add(
+                                DeviceItem(
+                                    deviceId,
+                                    ph,
+                                    tds,
+                                    turbidity,
+                                    deviceName,
+                                    colorHex
                                 )
-                                binding.newDevice.visibility = View.VISIBLE
-                                future.complete(Unit)
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-                                future.complete(Unit)
-                            }
-                        })
+                            )
+                            binding.newDevice.visibility = View.VISIBLE
+                            future.complete(Unit)
+                        }
+                    }
                 }
-
                 CompletableFuture.allOf(*deviceLoadPromises.toTypedArray()).thenRun {
                     runOnUiThread {
                         adapter.notifyDataSetChanged()
@@ -180,6 +193,62 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
             dialog.dismiss()
             scanQR()
         }
+        dialog.show()
+    }
+
+    @SuppressLint("MissingInflatedId")
+    private fun showEditDeviceDialog(position: Int, item: DeviceItem) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_device, null)
+        val nameInput = dialogView.findViewById<EditText>(R.id.editTextDeviceName)
+        val colorButton = dialogView.findViewById<Button>(R.id.chooseColorButton)
+        val colorPreview = dialogView.findViewById<View>(R.id.viewColorPreview)
+        val saveButton = dialogView.findViewById<Button>(R.id.saveButton)
+        val cancelButton = dialogView.findViewById<Button>(R.id.cancelButton)
+        colorPreview.setBackgroundColor(Color.parseColor(item.colorHex))
+
+        val dialog = AlertDialog.Builder(this).setView(dialogView).setCancelable(true).create()
+
+        nameInput.setText(item.deviceName)
+
+        var selectedColor = item.colorHex
+
+        colorButton.setOnClickListener {
+            ColorPickerDialogBuilder
+                .with(this)
+                .setTitle("Choose color")
+                .initialColor(Color.parseColor(item.colorHex))
+                .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
+                .density(12)
+                .setPositiveButton("OK") { _, color, _ ->
+                    selectedColor = String.format("#%06X", 0xFFFFFF and color)
+                    colorPreview.setBackgroundColor(color)
+                }
+                .setNegativeButton("Cancel", null)
+                .build()
+                .show()
+        }
+
+        saveButton.setOnClickListener{
+            item.deviceName = nameInput.text.toString()
+            item.colorHex = selectedColor
+            adapter.updateItem(position,item)
+
+            val userId = firebaseAuth.currentUser?.uid ?: return@setOnClickListener
+            val deviceId = item.id
+            val registryRef = FirebaseDatabase.getInstance()
+                .getReference("registry")
+                .child(userId)
+                .child(deviceId)
+
+            registryRef.child("deviceColor").setValue(item.colorHex)
+            registryRef.child("deviceName").setValue(item.deviceName)
+            dialog.dismiss()
+        }
+
+        cancelButton.setOnClickListener{
+            dialog.dismiss()
+        }
+
         dialog.show()
     }
 
@@ -233,7 +302,8 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
         val regItem = DeviceRegistry(true, customDeviceId, deviceName)
         registryRef = FirebaseDatabase.getInstance().getReference("registry")
         database = FirebaseDatabase.getInstance().getReference("esp32")
-        val thisDeviceRegistryRef = FirebaseDatabase.getInstance().getReference("registry").child(userId).child(deviceId)
+        val thisDeviceRegistryRef =
+            FirebaseDatabase.getInstance().getReference("registry").child(userId).child(deviceId)
 
         thisDeviceRegistryRef.get().addOnSuccessListener { thisRegSnapshot ->
             registryRef.get().addOnSuccessListener { regSnapshot ->
@@ -277,48 +347,74 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                             else {
                                 database.child(deviceId).get()
                                     .addOnSuccessListener { deviceSnapshot ->
-                                        if (deviceSnapshot.exists()){
-                                            registryRef.child(userId).child(deviceId).setValue(regItem)
-                                                .addOnSuccessListener{
+                                        if (deviceSnapshot.exists()) {
+                                            registryRef.child(userId).child(deviceId)
+                                                .setValue(regItem)
+                                                .addOnSuccessListener {
                                                     fetchDeviceData(deviceId)
                                                     binding.newDevice.visibility = View.VISIBLE
-                                                    Toast.makeText(this,"Device added to registry",Toast.LENGTH_SHORT).show()
-                                                }.addOnFailureListener{ e->
-                                                    Toast.makeText(this, "Error in registering device to registry: ${e.message}",Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(
+                                                        this,
+                                                        "Device added to registry",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }.addOnFailureListener { e ->
+                                                    Toast.makeText(
+                                                        this,
+                                                        "Error in registering device to registry: ${e.message}",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
                                                 }
-                                        }
-                                        else if (!deviceSnapshot.exists())
+                                        } else if (!deviceSnapshot.exists())
                                             Toast.makeText(
                                                 this,
                                                 "Device QR unrecognized.",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         else {
-                                            Toast.makeText(this, "Error",Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                             }
                         }.addOnFailureListener { e ->
-                        Toast.makeText(this, "Fetch failure: ${e.message}", Toast.LENGTH_SHORT)
-                            .show()
-                    }
+                            Toast.makeText(this, "Fetch failure: ${e.message}", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                 }
             }
         }
     }
 
     private fun fetchDeviceData(deviceId: String) {
-        val deviceReading = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId)
-        deviceReading.get().addOnSuccessListener { snapshot ->
-            val phValue = snapshot.child("ph").getValue(Float::class.java) ?: "N/A"
-            val tdsValue = snapshot.child("tds").getValue(Float::class.java) ?: "N/A"
-            val turbidityValue = snapshot.child("turbidity").getValue(Float::class.java) ?: "N/A"
+        val userId = firebaseAuth.currentUser?.uid ?: return
 
-            val newItem = DeviceItem(
-                deviceId, phValue.toString(), tdsValue.toString(), turbidityValue.toString()
-            )
-            adapter.addItem(newItem)
-            Toast.makeText(this, "Device added successfully", Toast.LENGTH_SHORT).show()
+        val deviceReading = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId)
+        val deviceData =
+            FirebaseDatabase.getInstance().getReference("registry").child(userId).child(deviceId)
+        deviceReading.get().addOnSuccessListener { snapshot ->
+            deviceData.get().addOnSuccessListener { dataSnapshot ->
+                val deviceName =
+                    dataSnapshot.child("deviceName").getValue(String::class.java) ?: "Device 1"
+                val deviceColor =
+                    dataSnapshot.child("deviceColor").getValue(String::class.java) ?: "#FFFFFF"
+                val phValue = snapshot.child("ph").getValue(Float::class.java) ?: "N/A"
+                val tdsValue = snapshot.child("tds").getValue(Float::class.java) ?: "N/A"
+                val turbidityValue =
+                    snapshot.child("turbidity").getValue(Float::class.java) ?: "N/A"
+
+                val newItem = DeviceItem(
+                    deviceId,
+                    phValue.toString(),
+                    tdsValue.toString(),
+                    turbidityValue.toString(),
+                    deviceName,
+                    deviceColor
+                )
+                adapter.addItem(newItem)
+                Toast.makeText(this, "Device added successfully", Toast.LENGTH_SHORT).show()
+            }.addOnFailureListener { _ ->
+
+            }
         }.addOnFailureListener { e ->
             Toast.makeText(this, "Error fetching device data: ${e.message}", Toast.LENGTH_SHORT)
                 .show()
@@ -338,5 +434,9 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
         val intent = Intent(this, WaterAnalysisActivity::class.java)
         intent.putExtra("deviceItem", item)
         startActivity(intent)
+    }
+
+    override fun onItemLongClick(position: Int, item: DeviceItem) {
+        showEditDeviceDialog(position, item)
     }
 }

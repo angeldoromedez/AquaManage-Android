@@ -58,9 +58,6 @@
             android:name=".RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".ScanQRActivity"
-            android:exported="false" />
-        <activity
             android:name=".LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.App.SplashScreen">

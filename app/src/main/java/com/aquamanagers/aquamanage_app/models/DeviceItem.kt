@@ -6,13 +6,17 @@ import android.os.Parcelable
 data class DeviceItem(val id: String,
                       val phValue: String,
                       val tdsValue: String,
-                      val turbidityValue: String
+                      val turbidityValue: String,
+                      var deviceName: String,
+                      var colorHex: String,
 ):Parcelable {
     constructor(parcel: Parcel): this(
         parcel.readString() ?: "Device",
         parcel.readString() ?: "0",
         parcel.readString()?:"0",
-        parcel.readString()?:"0"
+        parcel.readString()?:"0",
+        parcel.readString()?:"Device 1",
+        parcel.readString()?:"#FFFFFFF"
     )
 
     override fun writeToParcel(parcel:Parcel, flags:Int){
@@ -20,6 +24,8 @@ data class DeviceItem(val id: String,
         parcel.writeString(phValue)
         parcel.writeString(tdsValue)
         parcel.writeString(turbidityValue)
+        parcel.writeString(deviceName)
+        parcel.writeString(colorHex)
     }
 
     override fun describeContents(): Int = 0

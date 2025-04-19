@@ -25,8 +25,8 @@ class ForgotPasswordActivity : AppCompatActivity() {
             finish()
         }
 
-        binding.btnSend.setOnClickListener {
-            val email = binding.etEmailInput.text.toString().trim()
+        binding.btnContinue.setOnClickListener {
+            val email = binding.userEmail.text.toString().trim()
 
             if (TextUtils.isEmpty(email)) {
                 Toast.makeText(this, "Please enter your email", Toast.LENGTH_SHORT).show()
