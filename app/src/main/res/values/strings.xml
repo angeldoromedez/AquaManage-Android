@@ -65,4 +65,7 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="back_arrow">Back arrow</string>
+    <string name="technical_support">Technical Support</string>
+    <string name="technical_support_logo">Technical support logo</string>
 </resources>
