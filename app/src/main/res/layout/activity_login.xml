@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,6 +10,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="0dp"
+        android:contentDescription="@string/login_background"
         android:scaleType="fitXY"
         android:src="@drawable/bg" />
 
@@ -18,6 +20,7 @@
         android:layout_height="350dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
+        android:contentDescription="@string/wave_image"
         android:src="@drawable/amlogo" />
 
     <TextView
@@ -27,7 +30,7 @@
         android:layout_below="@id/logo"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:text="LOGIN"
+        android:text="@string/login_title"
         android:textSize="35sp"
         android:textColor="#000000"
         android:textStyle="bold"/>
@@ -39,36 +42,38 @@
         android:layout_below="@id/login_title"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:text="Sign in to continue"
+        android:text="@string/sign_in_to_continue"
         android:textSize="15sp"
         android:textColor="#000000"/>
 
     <EditText
-        android:id="@+id/username"
+        android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_below="@id/login_subtitle"
         android:layout_marginTop="30dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:hint="username"
+        android:autofillHints="username"
+        android:hint="@string/email_hint"
         android:padding="10dp"
         android:background="@drawable/edittext_background"
-        android:textColorHint="#FF000000"
-        android:inputType="text" />
+        android:inputType = "text"
+        tools:ignore="TextFields" />
 
     <EditText
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_below="@id/username"
+        android:layout_below="@id/email"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:hint="password"
+        android:autofillHints="****"
+        android:hint="@string/password_hint"
         android:padding="10dp"
+        android:drawableEnd="@drawable/ic_eye_closed"
         android:background="@drawable/edittext_background"
-        android:textColorHint="#FF000000"
         android:inputType="textPassword" />
 
     <Button
@@ -79,7 +84,7 @@
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
         android:background="@drawable/rounded_button"
-        android:text="Login"
+        android:text="@string/login_button"
         android:textColor="#FFFFFF"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
@@ -91,20 +96,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/login_button"
-        android:layout_marginTop="25dp"
         android:layout_centerHorizontal="true"
-        android:text="Don't have an account yet? Sign up."
-        android:textColor="#FF0000FF"
-        android:textSize="14sp"/>
+        android:layout_marginTop="25dp"
+        android:text="@string/signup_link"
+        android:textColor="#90CAF9"
+        android:textSize="14sp"
+        tools:ignore="TextContrastCheck" />
 
     <TextView
         android:id="@+id/forgot_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/signup_link"
-        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
-        android:text="Forgot Password?"
-        android:textColor="#FF0000FF"
-        android:textSize="14sp"/>
+        android:layout_marginTop="10dp"
+        android:text="@string/forgot_password"
+        android:textColor="#BBDEFB"
+        android:textSize="14sp"
+        tools:ignore="TextContrastCheck" />
 </RelativeLayout>

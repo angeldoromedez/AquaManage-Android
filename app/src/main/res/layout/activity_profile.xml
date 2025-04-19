@@ -10,9 +10,16 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/back_arrow"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="left"
+            android:src="@drawable/baseline_arrow_back_24" />
 
         <RelativeLayout
             android:layout_width="100dp"
@@ -42,7 +49,7 @@
             android:id="@+id/userName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Angel Dorothy Medez"
+            android:text="User"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#000000"
@@ -53,7 +60,7 @@
             android:id="@+id/userEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="aquaman123@gmail.com"
+            android:text="email"
             android:textSize="14sp"
             android:textColor="#808080"
             android:layout_marginTop="5dp"/>
@@ -84,6 +91,7 @@
 
         <!-- Change Password -->
         <LinearLayout
+            android:id="@+id/changePassButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -200,8 +208,10 @@
 
         <!-- Logout -->
         <LinearLayout
+            android:id="@+id/logout_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="true"
             android:orientation="horizontal"
             android:padding="10dp"
             android:clickable="true"

@@ -8,8 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:src="@drawable/bg"
-        android:scaleType="fitXY"/>
+        android:scaleType="fitXY"
+        android:src="@drawable/bg" />
 
     <ImageView
         android:id="@+id/logo"
@@ -114,6 +114,7 @@
         android:layout_marginRight="30dp"
         android:hint="Password"
         android:padding="15dp"
+        android:drawableEnd="@drawable/ic_eye_closed"
         android:background="@drawable/edittext_background"
         android:textColorHint="#FF000000"
         android:inputType="textPassword"/>
@@ -130,6 +131,7 @@
         android:padding="15dp"
         android:background="@drawable/edittext_background"
         android:textColorHint="#FF000000"
+        android:drawableEnd="@drawable/ic_eye_closed"
         android:inputType="textPassword"/>
 
     <Button
