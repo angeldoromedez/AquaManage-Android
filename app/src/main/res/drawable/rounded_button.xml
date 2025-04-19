@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <corners android:radius="40dp" />
+    <corners android:radius="10dp" />
+
     <gradient
         android:angle="45"
-        android:startColor="#FF512F"
-        android:endColor="#DD2476"
+        android:startColor="@color/baby_blue"
+        android:endColor="@color/regular_blue"
         android:type="linear" />
+
     <padding
         android:left="12dp"
         android:top="12dp"
         android:right="12dp"
         android:bottom="12dp" />
 </shape>
+

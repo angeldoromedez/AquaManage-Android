@@ -7,6 +7,17 @@
     android:background="@drawable/bg"
     tools:context=".WaterAnalysisActivity">
 
+    <!-- Back Button -->
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_back"
+        android:contentDescription="Back" />
+
     <TextView
         android:id="@+id/deviceTitle"
         android:layout_width="wrap_content"
@@ -48,6 +59,7 @@
         android:orientation="horizontal"
         android:gravity="center">
 
+        <!-- PH -->
         <androidx.cardview.widget.CardView
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -55,28 +67,33 @@
             app:cardElevation="4dp"
             android:backgroundTint="#b8dcf3"
             android:layout_margin="5dp">
-            <TextView
-                android:id="@+id/phValueLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:text="PH"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:textColor="@color/dark_blue"
-                />
-            <TextView
-                android:id="@+id/phValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="PH"
-                android:textColor="@color/dark_blue"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/phValueLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PH"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/dark_blue" />
+
+                <TextView
+                    android:id="@+id/phValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PH"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- TDS -->
         <androidx.cardview.widget.CardView
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -84,28 +101,33 @@
             app:cardElevation="4dp"
             android:backgroundTint="#b8dcf3"
             android:layout_margin="5dp">
-            <TextView
-                android:id="@+id/tdsValueLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:text="TDS"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:textColor="@color/dark_blue"
-                />
-            <TextView
-                android:id="@+id/tdsValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="TDS"
-                android:textColor="@color/dark_blue"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tdsValueLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TDS"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/dark_blue" />
+
+                <TextView
+                    android:id="@+id/tdsValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TDS"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Turbidity -->
         <androidx.cardview.widget.CardView
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -113,30 +135,34 @@
             app:cardElevation="4dp"
             android:backgroundTint="#b8dcf3"
             android:layout_margin="5dp">
-            <TextView
-                android:id="@+id/turbidityValueLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:text="PH"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:textColor="@color/dark_blue"
-                />
-            <TextView
-                android:id="@+id/turbidityValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="NTU"
-                android:textColor="@color/dark_blue"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/turbidityValueLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NTU"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/dark_blue" />
+
+                <TextView
+                    android:id="@+id/turbidityValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NTU"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/checkWaterQuality"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
@@ -144,7 +170,7 @@
         android:layout_marginTop="25dp"
         android:layout_centerHorizontal="true"
         android:text="Check Water Quality"
-        android:background="@drawable/rounded_button"
+        android:backgroundTint="@color/dark_blue"
         android:textColor="@android:color/white" />
 
     <TextView
@@ -156,7 +182,7 @@
         android:textStyle="bold"
         android:textColor="@color/dark_blue"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="450dp"/>
+        android:layout_marginTop="450dp" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -168,7 +194,7 @@
         android:progressDrawable="@drawable/custom_progress"
         android:layout_below="@id/treatmentTitle"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"/>
+        android:layout_marginTop="40dp" />
 
     <TextView
         android:id="@+id/progressPercentage"
@@ -180,7 +206,7 @@
         android:textColor="@color/black"
         android:layout_toEndOf="@id/progressBar"
         android:layout_alignBottom="@id/progressBar"
-        android:layout_marginStart="10dp"/>
+        android:layout_marginStart="10dp" />
 
     <!-- Buttons Container -->
     <LinearLayout
@@ -192,26 +218,22 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp">
 
-        <!-- Start Button -->
-
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_Start"
             android:layout_width="150dp"
             android:layout_height="50dp"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/rounded_button"
             android:text="Start Treatment"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            app:backgroundTint="#4CAF50" />
 
-        <!-- Stop Button -->
-
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStop"
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:text="STOP"
             android:textColor="@android:color/white"
-            android:background="@drawable/stop_button"/>
+            app:backgroundTint="#F44336" />
     </LinearLayout>
 
 </RelativeLayout>

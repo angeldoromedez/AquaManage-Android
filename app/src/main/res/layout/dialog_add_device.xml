@@ -3,7 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="24dp"
-    android:background="@color/dark_blue"
+    android:background="@color/blue"
     android:orientation="vertical"
     android:layout_gravity="center">
 
@@ -38,7 +38,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/open_qr_scanner_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -47,6 +47,11 @@
         android:background="@drawable/rounded_button"
         android:layout_below="@id/dialog_subtitle"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp" />
+
 
 </RelativeLayout>

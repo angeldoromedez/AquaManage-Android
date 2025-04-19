@@ -8,10 +8,10 @@
 
     <ImageView
         android:id="@+id/history_icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="35dp"
         android:contentDescription="@string/history_icon"
         android:src="@drawable/history"
         android:layout_alignParentStart="true"
@@ -23,14 +23,14 @@
         android:contentDescription="@string/notification_profile_container"
         android:orientation="horizontal"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="35dp"
         android:layout_marginEnd="16dp"
         tools:ignore="RelativeOverlap">
 
         <ImageView
             android:id="@+id/bell_icon"
-            android:layout_width="50dp"
-            android:layout_height="55dp"
+            android:layout_width="40dp"
+            android:layout_height="45dp"
             android:contentDescription="@string/bell_notification_icon"
             android:src="@drawable/notification"
             android:layout_gravity="center_vertical"
@@ -48,8 +48,8 @@
 
         <ImageView
             android:id="@+id/profile_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:contentDescription="@string/profile_icon"
             android:layout_gravity="center_vertical"
             android:src="@drawable/profile"
@@ -63,42 +63,41 @@
         android:text="@string/dashboard"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:textColor="#000000"
+        android:textColor="@color/dark_blue"
         android:layout_below="@id/history_icon"
         android:layout_marginTop="32dp"
         android:layout_marginStart="20dp" />
 
+    <androidx.cardview.widget.CardView
+    android:id="@+id/button_holder"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginTop="20dp"
+    android:layout_below="@id/dashboard_title"
+    card_view:cardCornerRadius="30dp"
+    card_view:cardElevation="0dp">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/add_device"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:backgroundTint="@color/baby_blue"
+        android:text="+"
+        android:textSize="60sp"
+        android:textColor="#FFFFFF"
+        android:gravity="center"/>
+</androidx.cardview.widget.CardView>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/newDevice"
-        android:layout_width="300dp"
-        android:layout_height="200dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_margin="20dp"
-        android:layout_below="@id/dashboard_title"
+        android:layout_below="@id/button_holder"
         card_view:cardCornerRadius="40dp"
-        android:visibility="gone"
         />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/button_holder"
-        android:layout_width="300dp"
-        android:layout_height="200dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="20dp"
-        android:layout_below="@id/newDevice"
-        card_view:cardCornerRadius="40dp">
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/add_device"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/add_device"
-            android:drawablePadding="50dp"
-            android:textSize="50sp"
-            android:gravity="center"
-            tools:ignore="SpeakableTextPresentCheck" />
-    </androidx.cardview.widget.CardView>
-
 
 </RelativeLayout>
