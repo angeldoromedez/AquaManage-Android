@@ -38,10 +38,11 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(this, ChangePassword::class.java))
         }
 
-        binding .backArrow.setOnClickListener {
+        binding.backArrow.setOnClickListener {
             finish()
         }
     }
+
 
     private fun fetchUserData() {
         val userId = firebaseAuth.currentUser?.uid
@@ -68,11 +69,11 @@ class ProfileActivity : AppCompatActivity() {
                     Toast.makeText(this, "User data not found", Toast.LENGTH_SHORT).show()
                 }
             }.addOnFailureListener { e ->
-                Toast.makeText(this, "Failed to fetch user data: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Failed to fetch user data: ${e.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
         } else {
             Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show()
         }
     }
-
 }

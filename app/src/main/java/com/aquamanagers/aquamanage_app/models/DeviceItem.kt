@@ -25,12 +25,8 @@ data class DeviceItem(val id: String,
     override fun describeContents(): Int = 0
 
     companion object CREATOR:Parcelable.Creator<DeviceItem> {
-        override fun createFromParcel(parcel: Parcel): DeviceItem{
-            return DeviceItem(parcel)
-        }
+        override fun createFromParcel(parcel: Parcel): DeviceItem = DeviceItem(parcel)
 
-        override fun newArray(size: Int): Array<DeviceItem?> {
-            return arrayOfNulls(size)
-        }
+        override fun newArray(size: Int): Array<DeviceItem?> = arrayOfNulls(size)
     }
 }
