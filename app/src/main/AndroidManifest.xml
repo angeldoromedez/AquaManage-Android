@@ -19,16 +19,13 @@
         android:theme="@style/Theme.AquaManage_App"
         tools:targetApi="31">
         <activity
+            android:name=".ChatSupportActivity"
+            android:exported="true"/>
+        <activity
             android:name=".ChangePassword"
             android:exported="false" />
         <activity
             android:name=".LoginMenuActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ChatSupportActivity"
-            android:exported="false" />
-        <activity
-            android:name=".TechnicalSupportActivity"
             android:exported="false" />
         <activity
             android:name=".VerificationActivity"
