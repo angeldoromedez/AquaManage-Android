@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
-    android:padding="16dp"
+    android:padding="3dp"
     tools:context=".ProfileActivity">
 
     <LinearLayout
@@ -161,29 +161,31 @@
         </LinearLayout>
 
         <!-- Technical Support -->
+
+        <!-- Session Section -->
         <LinearLayout
+            android:id="@+id/Tech_support"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp"
+            android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
-            android:background="?android:attr/selectableItemBackground">
+            android:orientation="horizontal"
+            android:padding="10dp">
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/technicalsupport"
-                android:layout_marginEnd="10dp"/>
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/technicalsupport" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Technical Support"
-                android:textSize="16sp"
-                android:textColor="#000000"/>
+                android:textColor="#000000"
+                android:textSize="16sp" />
         </LinearLayout>
 
-        <!-- Session Section -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -41,6 +41,10 @@ class ProfileActivity : AppCompatActivity() {
         binding.backArrow.setOnClickListener {
             finish()
         }
+
+        binding.TechSupport.setOnClickListener{
+            startActivity(Intent(this, ChatSupportActivity::class.java))
+        }
     }
 
 
