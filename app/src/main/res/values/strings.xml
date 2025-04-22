@@ -73,4 +73,8 @@
     <string name="turbidity">Turbidity:</string>
     <string name="device_name">Device name</string>
     <string name="_0">0</string>
+    <string name="mark_all_as_read">Mark all as read</string>
+    <string name="notification_image">Notification image</string>
+    <string name="notification_message">Treatment Complete</string>
+    <string name="notificationTime">3 min ago</string>
 </resources>

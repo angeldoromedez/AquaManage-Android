@@ -75,6 +75,11 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
 
         reloadDevices()
 
+        binding.bellIcon.setOnClickListener {
+            val intent = Intent(this, NotificationsActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.profileIcon.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)

@@ -57,7 +57,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/dashboard_title"
+        android:id="@+id/notification_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Notifications"
@@ -67,5 +67,24 @@
         android:layout_below="@id/history_icon"
         android:layout_marginTop="32dp"
         android:layout_marginStart="20dp" />
+
+    <TextView
+        android:id="@+id/markReadTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/mark_all_as_read"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_below="@id/notification_title"
+        android:layout_marginTop="30dp"
+        android:layout_marginHorizontal="30dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/notificationContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/markReadTextView"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="20dp"/>
 
 </RelativeLayout>

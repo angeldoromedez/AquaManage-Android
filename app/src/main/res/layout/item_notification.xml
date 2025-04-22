@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notificationContainer"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:layout_marginVertical="20dp"
+    android:background="#584ea8e1">
+
+    <ImageView
+        android:id="@+id/notificationImage"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginHorizontal="35dp"
+        android:layout_marginVertical="20dp"
+        android:contentDescription="@string/notification_image"
+        android:src="@drawable/carmela_hi" />
+
+    <TextView
+        android:id="@+id/notificationMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/notificationImage"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/notificationImage"
+        android:text="@string/notification_message"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/deviceName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/notificationMessage"
+        android:layout_marginTop="15dp"
+        android:layout_toEndOf="@id/notificationImage"
+        android:text="@string/device_name"
+        android:textStyle="bold"
+        android:textColor="@color/black"/>
+
+    <LinearLayout
+        android:id="@+id/notificationMenu"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@id/notificationMessage"
+        android:orientation="horizontal"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="7dp">
+
+        <View
+            android:background="@drawable/rounded_white_view"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginEnd="3dp"/>
+
+        <View
+            android:background="@drawable/rounded_white_view"
+            android:layout_width="10dp"
+            android:layout_height="10dp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/notificationTime"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@id/deviceName"
+        android:layout_marginEnd="10dp"/>
+</RelativeLayout>

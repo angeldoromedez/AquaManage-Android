@@ -25,12 +25,6 @@
             android:name=".ChangePassword"
             android:exported="false" />
         <activity
-            android:name=".LoginMenuActivity"
-            android:exported="false" />
-        <activity
-            android:name=".VerificationActivity"
-            android:exported="false" />
-        <activity
             android:name=".ForgotPasswordActivity"
             android:exported="false" />
         <activity
