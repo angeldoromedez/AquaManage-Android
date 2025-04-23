@@ -19,7 +19,7 @@ class NotificationAdapter(
         val imageView: ImageView = view.findViewById(R.id.notificationImage)
         val messageView: TextView = view.findViewById(R.id.notificationMessage)
         val deviceNameView: TextView = view.findViewById(R.id.deviceName)
-        val container: RelativeLayout = view.findViewById(R.id.notificationContainer) // optional if you want to apply background color dynamically
+        val container: RelativeLayout = view.findViewById(R.id.notificationCard) // optional if you want to apply background color dynamically
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,12 +34,16 @@ class NotificationAdapter(
         holder.messageView.text = item.notificationName
         holder.deviceNameView.text = item.deviceName
 
-        // Optional: Apply colorHex as background with transparency
         try {
             holder.view.setBackgroundColor(Color.parseColor(item.colorHex))
         } catch (e: IllegalArgumentException) {
-            holder.view.setBackgroundColor(Color.parseColor("#4ea8e188")) // fallback
+            holder.view.setBackgroundColor(Color.parseColor("#584ea8e1"))
         }
+    }
+
+    fun addNotification(notification: NotificationItem){
+        items.add(0,notification)
+        notifyItemInserted(0)
     }
 
     override fun getItemCount(): Int = items.size

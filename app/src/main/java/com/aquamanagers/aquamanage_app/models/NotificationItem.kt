@@ -5,22 +5,25 @@ import android.os.Parcelable
 
 
 data class NotificationItem(
-    val id: String,
-    val notificationImage: Int,
-    val notificationName: String,
-    var deviceName: String,
-    var colorHex: String,
+    val id: String = "",
+    val deviceId: String = "",
+    val notificationImage: Int = 0,
+    val notificationName: String = "",
+    var deviceName: String = "",
+    var colorHex: String = "#FFFFFF"
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "Device",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
         parcel.readInt(),
-        parcel.readString() ?: "Treatment Complete",
-        parcel.readString() ?: "Device 1",
-        parcel.readString() ?: "#FFFFFFF"
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "#FFFFFF"
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
+        parcel.writeString(deviceId)
         parcel.writeInt(notificationImage)
         parcel.writeString(notificationName)
         parcel.writeString(deviceName)
