@@ -254,6 +254,6 @@ class RegisterActivity : AppCompatActivity() {
         val length = 8
         return (1..length)
             .map { allowedChars[random.nextInt(allowedChars.length)] }
-            .joinToString {""}
+            .joinToString("")
     }
 }
