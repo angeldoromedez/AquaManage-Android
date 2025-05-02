@@ -77,4 +77,6 @@
     <string name="notification_image">Notification image</string>
     <string name="notification_message">Treatment Complete</string>
     <string name="notificationTime">3 min ago</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
