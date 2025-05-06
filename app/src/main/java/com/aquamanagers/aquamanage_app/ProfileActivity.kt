@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import com.aquamanagers.aquamanage_app.adapters.AvatarAdapter
 import com.aquamanagers.aquamanage_app.databinding.ActivityProfileBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -34,19 +36,26 @@ class ProfileActivity : AppCompatActivity() {
             finish()
         }
 
+        // Change Password Button
         binding.changePassButton.setOnClickListener {
             startActivity(Intent(this, ChangePassword::class.java))
         }
 
+        // Back Arrow Button
         binding.backArrow.setOnClickListener {
             finish()
         }
 
-        binding.TechSupport.setOnClickListener{
+        // Tech Support Button
+        binding.TechSupport.setOnClickListener {
             startActivity(Intent(this, ChatSupportActivity::class.java))
         }
-    }
 
+        // Avatar Edit Icon Click
+        binding.editProfileIcon.setOnClickListener {
+            showAvatarSelectionDialog()
+        }
+    }
 
     private fun fetchUserData() {
         val userId = firebaseAuth.currentUser?.uid
@@ -58,7 +67,6 @@ class ProfileActivity : AppCompatActivity() {
                     val middleInitial = snapshot.child("middleInitial").value?.toString()?.trim()
                     val lastName = snapshot.child("lastName").value?.toString()?.trim() ?: ""
                     val userEmail = snapshot.child("email").value?.toString() ?: ""
-
 
                     val userName = if (!middleInitial.isNullOrEmpty()) {
                         "$firstName ${middleInitial.first().uppercaseChar()}. $lastName"
@@ -73,11 +81,37 @@ class ProfileActivity : AppCompatActivity() {
                     Toast.makeText(this, "User data not found", Toast.LENGTH_SHORT).show()
                 }
             }.addOnFailureListener { e ->
-                Toast.makeText(this, "Failed to fetch user data: ${e.message}", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(this, "Failed to fetch user data: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         } else {
             Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show()
         }
     }
+
+    // Avatar selection dialog with GridView
+    private fun showAvatarSelectionDialog() {
+        val avatars = listOf(
+            R.drawable.ava_a, R.drawable.ava_b, R.drawable.ava_c, R.drawable.ava_d, R.drawable.ava_e,
+            R.drawable.ava_f, R.drawable.ava_g, R.drawable.ava_h, R.drawable.ava_i, R.drawable.ava_j
+        )
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_avatar_picker, null)
+        val recyclerView = dialogView.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.avatarRecyclerView)
+        recyclerView.layoutManager = GridLayoutManager(this, 3)
+
+        val alertDialog = android.app.AlertDialog.Builder(this)
+            .setTitle("Choose Your Avatar")
+            .setView(dialogView)
+            .create()
+
+        val adapter = AvatarAdapter(avatars) { selectedAvatarResId ->
+            binding.profileImage.setImageResource(selectedAvatarResId)
+            alertDialog.dismiss()
+        }
+
+        recyclerView.adapter = adapter
+
+        alertDialog.show()
+    }
 }
+

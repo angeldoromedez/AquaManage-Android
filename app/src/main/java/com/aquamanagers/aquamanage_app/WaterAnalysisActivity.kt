@@ -53,6 +53,9 @@ class WaterAnalysisActivity : AppCompatActivity() {
         binding.btnStop.setOnClickListener {
             FirebaseDatabase.getInstance().getReference("esp32").child(deviceId).child("controls")
                 .setValue(0)
+                .addOnSuccessListener {
+                    NotificationsActivity.sendStopNotification(this,userId, deviceId)
+                }
         }
     }
 }

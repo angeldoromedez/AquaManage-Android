@@ -2,16 +2,22 @@ package com.aquamanagers.aquamanage_app
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.view.MotionEvent
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.aquamanagers.aquamanage_app.databinding.ActivityRegisterBinding
+import com.aquamanagers.aquamanage_app.models.AdminNotification
 import com.aquamanagers.aquamanage_app.models.Users
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.Random
 
 class RegisterActivity : AppCompatActivity() {
@@ -19,9 +25,11 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var database: DatabaseReference
+    private lateinit var adminDatabase: DatabaseReference
     private var isPasswordVisible = false
     private var isConfirmPasswordVisible = false
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +51,7 @@ class RegisterActivity : AppCompatActivity() {
             val email = binding.email.text.toString().trim()
             val password = binding.password.text.toString()
             val confirmPassword = binding.confirmPassword.text.toString()
+
 
             if (validateInput(firstName, lastName, email, password, confirmPassword)) {
                 registerUser(firstName, middleInitial, lastName, email, password)
@@ -102,7 +111,8 @@ class RegisterActivity : AppCompatActivity() {
 
         binding.confirmPassword.typeface = binding.email.typeface
         binding.confirmPassword.setSelection(binding.confirmPassword.text.length)
-        val icon = if (isConfirmPasswordVisible) R.drawable.ic_eye_open else R.drawable.ic_eye_closed
+        val icon =
+            if (isConfirmPasswordVisible) R.drawable.ic_eye_open else R.drawable.ic_eye_closed
         binding.confirmPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, icon, 0)
     }
 
@@ -149,6 +159,7 @@ class RegisterActivity : AppCompatActivity() {
         return true
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun registerUser(
         firstName: String, middleInitial: String, lastName: String,
         email: String, password: String
@@ -157,12 +168,19 @@ class RegisterActivity : AppCompatActivity() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val customUserId = generateCustomUserId()
+                    val customAdminNotificationId = generateAdminNotificationId()
                     val firebaseUser = firebaseAuth.currentUser
                     val authUid = firebaseUser?.uid
 
                     if (authUid != null) {
                         database = FirebaseDatabase.getInstance().getReference("Users")
+                        adminDatabase =
+                            FirebaseDatabase.getInstance().getReference("notificationAdmin")
+                                .child("newUsers")
                         val createdAt = System.currentTimeMillis()
+                        val currentDate = Date()
+                        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        val formattedDate = dateFormat.format(currentDate)
 
                         val user = Users(
                             firstName = firstName,
@@ -173,30 +191,67 @@ class RegisterActivity : AppCompatActivity() {
                             createdAt = createdAt
                         )
 
+                        val adminNotification = AdminNotification(
+                            id = customAdminNotificationId,
+                            customId = customUserId,
+                            date = formattedDate,
+                            time = createdAt,
+                            description = "User $customUserId created"
+                        )
+
                         database.child(authUid).setValue(user)
                             .addOnSuccessListener {
-                                Toast.makeText(this, "Registration successful. Please log in.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this,
+                                    "Registration successful. Please log in.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                adminDatabase.child(authUid).setValue(adminNotification)
+                                    .addOnSuccessListener {
+                                        //TODO
+                                    }.addOnFailureListener { e ->
+                                        Toast.makeText(
+                                            this,
+                                            "Error sending admin notification: ${e.message}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 firebaseAuth.signOut()
 
-                                val intent = Intent(this, LoginActivity::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                val intent = Intent(this, RemindersActivity::class.java)
+                                intent.flags =
+                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 startActivity(intent)
                                 finish()
                             }
                             .addOnFailureListener {
-                                Toast.makeText(this, "Error saving user data", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "Error saving user data", Toast.LENGTH_SHORT)
+                                    .show()
                             }
                     } else {
                         Toast.makeText(this, "Failed to get Auth UID", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this, task.exception?.message ?: "Registration failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        task.exception?.message ?: "Registration failed",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
     }
 
     private fun generateCustomUserId(): String {
         val allowedChars = "0123456789"
+        val random = Random()
+        val length = 8
+        return (1..length)
+            .map { allowedChars[random.nextInt(allowedChars.length)] }
+            .joinToString("")
+    }
+
+    private fun generateAdminNotificationId(): String {
+        val allowedChars = "12345abcdeABCDE"
         val random = Random()
         val length = 8
         return (1..length)

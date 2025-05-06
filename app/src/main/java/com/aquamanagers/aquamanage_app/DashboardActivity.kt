@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aquamanagers.aquamanage_app.adapters.DeviceCardAdapter
 import com.aquamanagers.aquamanage_app.databinding.ActivityDashboardBinding
+import com.aquamanagers.aquamanage_app.models.AdminNotification
 import com.aquamanagers.aquamanage_app.models.DeviceItem
 import com.aquamanagers.aquamanage_app.models.DeviceRegistry
 import com.aquamanagers.aquamanage_app.models.Users
@@ -35,13 +36,18 @@ import com.google.firebase.database.ValueEventListener
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.Random
 import java.util.concurrent.CompletableFuture
+
 
 class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickListener {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var registryRef: DatabaseReference
     private lateinit var database: DatabaseReference
+    private lateinit var adminDatabase: DatabaseReference
     private lateinit var binding: ActivityDashboardBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: DeviceCardAdapter
@@ -182,6 +188,7 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
 
     }
 
+    @SuppressLint("NewApi")
     private fun showAddDeviceDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_add_device, null)
         val dialog = AlertDialog.Builder(this).setView(dialogView).setCancelable(true).create()
@@ -233,10 +240,10 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                 .show()
         }
 
-        saveButton.setOnClickListener{
+        saveButton.setOnClickListener {
             item.deviceName = nameInput.text.toString()
             item.colorHex = selectedColor
-            adapter.updateItem(position,item)
+            adapter.updateItem(position, item)
 
             val userId = firebaseAuth.currentUser?.uid ?: return@setOnClickListener
             val deviceId = item.id
@@ -250,7 +257,7 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
             dialog.dismiss()
         }
 
-        cancelButton.setOnClickListener{
+        cancelButton.setOnClickListener {
             dialog.dismiss()
         }
 
@@ -307,6 +314,8 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
         val regItem = DeviceRegistry(true, customDeviceId, deviceName)
         registryRef = FirebaseDatabase.getInstance().getReference("registry")
         database = FirebaseDatabase.getInstance().getReference("esp32")
+        adminDatabase =
+            FirebaseDatabase.getInstance().getReference("notificationAdmin").child("newDevices")
         val thisDeviceRegistryRef =
             FirebaseDatabase.getInstance().getReference("registry").child(userId).child(deviceId)
 
@@ -363,12 +372,56 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                                                         "Device added to registry",
                                                         Toast.LENGTH_SHORT
                                                     ).show()
-                                                }.addOnFailureListener { e ->
-                                                    Toast.makeText(
-                                                        this,
-                                                        "Error in registering device to registry: ${e.message}",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
+
+                                                    val currentUser =
+                                                        firebaseAuth.currentUser?.uid ?: "N/A"
+                                                    val customAdminNotification =
+                                                        generateAdminNotificationId()
+                                                    val currentDate = Date()
+                                                    val dateFormat = SimpleDateFormat(
+                                                        "yyyy-MM-dd",
+                                                        Locale.getDefault()
+                                                    )
+                                                    val formattedDate =
+                                                        dateFormat.format(currentDate)
+                                                    val registeredAt = System.currentTimeMillis()
+                                                    val userReference =
+                                                        FirebaseDatabase.getInstance()
+                                                            .getReference("Users")
+                                                            .child(currentUser)
+                                                    userReference.get()
+                                                        .addOnSuccessListener { snapshot ->
+                                                            val customUserId =
+                                                                snapshot.child("customUID")
+                                                                    .getValue(String::class.java)
+                                                                    ?: "N/A"
+
+                                                            val notificationAdmin =
+                                                                AdminNotification(
+                                                                    id = customAdminNotification,
+                                                                    customId = customDeviceId,
+                                                                    date = formattedDate,
+                                                                    time = registeredAt,
+                                                                    description = ("Device $customDeviceId added to user $customUserId")
+                                                                )
+                                                            adminDatabase.child(deviceId)
+                                                                .setValue(notificationAdmin)
+                                                                .addOnSuccessListener {
+                                                                    //TODO
+                                                                }.addOnFailureListener { e ->
+                                                                    Toast.makeText(
+                                                                        this,
+                                                                        "Error sending admin notification: ${e.message}",
+                                                                        Toast.LENGTH_SHORT
+                                                                    ).show()
+                                                                }
+                                                        }.addOnFailureListener { e ->
+                                                        Toast.makeText(
+                                                            this,
+                                                            "Error in registering device to registry: ${e.message}",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    }
                                                 }
                                         } else if (!deviceSnapshot.exists())
                                             Toast.makeText(
@@ -428,6 +481,15 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
 
     private fun generateCustomDeviceId(): String {
         val allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        val random = Random()
+        val length = 8
+        return (1..length)
+            .map { allowedChars[random.nextInt(allowedChars.length)] }
+            .joinToString("")
+    }
+
+    private fun generateAdminNotificationId(): String {
+        val allowedChars = "12345abcdeABCDE"
         val random = Random()
         val length = 8
         return (1..length)

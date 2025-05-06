@@ -125,17 +125,17 @@
             app:cardElevation="4dp"
             android:backgroundTint="#b8dcf3"
             android:layout_margin="5dp">
+
             <TextView
                 android:id="@+id/turbidityValueLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
-                android:text="PH"
-                android:textSize="10sp"
-                android:textStyle="bold"
+                android:text="NTU"
                 android:textColor="@color/dark_blue"
-                />
+                android:textSize="10sp"
+                android:textStyle="bold" />
             <TextView
                 android:id="@+id/turbidityValue"
                 android:layout_width="wrap_content"
