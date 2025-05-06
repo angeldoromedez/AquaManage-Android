@@ -103,10 +103,43 @@ class NotificationsActivity : AppCompatActivity() {
                 )
 
                 notificationRef.setValue(stopNotification)
-                Toast.makeText(context,"N otification sent",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,"Notification sent",Toast.LENGTH_SHORT).show()
             }.addOnFailureListener { e ->
                 Toast.makeText(context, "Failed to notify: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
+
+        fun sendCompleteNotification(context: Context, userId: String, deviceId: String) {
+            val customNotificationId = UUID.randomUUID().toString()
+            val notificationRef = FirebaseDatabase.getInstance()
+                .getReference("notifications")
+                .child(userId)
+                .child(customNotificationId)
+
+            val deviceRef = FirebaseDatabase
+                .getInstance()
+                .getReference("registry")
+                .child(userId).child(deviceId)
+                .child("deviceName")
+
+            deviceRef.get().addOnSuccessListener { deviceSnapshot ->
+                val deviceName = deviceSnapshot.getValue(String::class.java) ?: "Unknown device"
+
+                val stopNotification = NotificationItem(
+                    id = customNotificationId,
+                    deviceId = deviceId,
+                    notificationImage = R.drawable.carmela_hi,
+                    notificationName = "Treatment Completed",
+                    deviceName = deviceName,
+                    colorHex = R.color.notification_blue.toString()
+                )
+
+                notificationRef.setValue(stopNotification)
+                Toast.makeText(context,"Notification sent",Toast.LENGTH_SHORT).show()
+            }.addOnFailureListener { e ->
+                Toast.makeText(context, "Failed to notify: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 }
