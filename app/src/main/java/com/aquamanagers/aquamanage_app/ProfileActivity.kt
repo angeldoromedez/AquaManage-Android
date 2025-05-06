@@ -21,6 +21,11 @@ class ProfileActivity : AppCompatActivity() {
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val prefs = getSharedPreferences("AppPreferences", MODE_PRIVATE)
+        val savedAvatarResId = prefs.getInt("selectedAvatar", -1)
+        if(savedAvatarResId != -1)
+            binding.profileImage.setImageResource(savedAvatarResId)
+
         firebaseAuth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().getReference("Users")
 
@@ -106,6 +111,9 @@ class ProfileActivity : AppCompatActivity() {
 
         val adapter = AvatarAdapter(avatars) { selectedAvatarResId ->
             binding.profileImage.setImageResource(selectedAvatarResId)
+
+            val prefs = getSharedPreferences("ProfileAvatar", MODE_PRIVATE)
+            prefs.edit().putInt("selectedAvatar", selectedAvatarResId).apply()
             alertDialog.dismiss()
         }
 

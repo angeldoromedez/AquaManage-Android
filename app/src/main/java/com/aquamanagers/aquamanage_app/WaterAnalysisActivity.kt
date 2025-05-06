@@ -4,11 +4,15 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.aquamanagers.aquamanage_app.databinding.ActivityWaterAnalysisBinding
+import com.aquamanagers.aquamanage_app.models.DeviceData
 import com.aquamanagers.aquamanage_app.models.DeviceItem
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 @Suppress("DEPRECATION")
 class WaterAnalysisActivity : AppCompatActivity() {
@@ -46,8 +50,34 @@ class WaterAnalysisActivity : AppCompatActivity() {
         binding.turbidityValue.text = turDeviceItem
 
         binding.btnStart.setOnClickListener {
-            FirebaseDatabase.getInstance().getReference("esp32").child(deviceId).child("controls")
-                .setValue(1)
+            val resetDefault = DeviceData(
+                controls = 1,
+                ph = 0.0,
+                tds = 0.0,
+                turbidity = 0.0
+            )
+            val deviceRef = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId)
+            FirebaseDatabase.getInstance().getReference("esp32").child(deviceId)
+                .setValue(resetDefault)
+                .addOnSuccessListener{
+                    deviceRef.addValueEventListener(object: ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            val ph = snapshot.child("ph").getValue(Double::class.java)
+                            val turbidity = snapshot.child("turbidity").getValue(Double::class.java)
+                            val tds = snapshot.child("tds").getValue(Double::class.java)
+
+                            if ((ph ?: 0.0) > 0 || (turbidity ?: 0.0) > 0 || (tds ?: 0.0) > 0) {
+                                NotificationsActivity.sendStopNotification(this@WaterAnalysisActivity, userId, deviceId)
+                                deviceRef.removeEventListener(this)
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("Not yet implemented")
+                        }
+
+                    })
+                }
         }
 
         binding.btnStop.setOnClickListener {
