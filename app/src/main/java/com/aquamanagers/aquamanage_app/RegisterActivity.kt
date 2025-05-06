@@ -52,6 +52,7 @@ class RegisterActivity : AppCompatActivity() {
             val password = binding.password.text.toString()
             val confirmPassword = binding.confirmPassword.text.toString()
 
+
             if (validateInput(firstName, lastName, email, password, confirmPassword)) {
                 registerUser(firstName, middleInitial, lastName, email, password)
             }
@@ -216,7 +217,7 @@ class RegisterActivity : AppCompatActivity() {
                                     }
                                 firebaseAuth.signOut()
 
-                                val intent = Intent(this, LoginActivity::class.java)
+                                val intent = Intent(this, RemindersActivity::class.java)
                                 intent.flags =
                                     Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 startActivity(intent)

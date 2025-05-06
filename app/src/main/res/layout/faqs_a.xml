@@ -1,0 +1,145 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
+    android:padding="20dp">
+
+    <!-- Back Button -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/baseline_arrow_back_24"
+        android:contentDescription="Back" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/backButton"
+        android:layout_marginTop="20dp"
+        android:text="How to connect the device to the app?"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/dark_blue" />
+
+    <TextView
+        android:id="@+id/step1Header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/titleText"
+        android:layout_marginTop="20dp"
+        android:text="1.  Sign up or Log in"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/dark_blue" />
+
+    <!-- Step 1 Detail -->
+    <TextView
+        android:id="@+id/step1Detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/step1Header"
+        android:layout_marginTop="4dp"
+        android:text="•  First, create an account or log in to your existing one to access the app features."
+        android:textSize="15sp"
+        android:textColor="@color/dark_blue" />
+
+    <!-- Step 2 Header -->
+    <TextView
+        android:id="@+id/step2Header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/step1Detail"
+        android:layout_marginTop="25dp"
+        android:text="2.  Go to the Dashboard and Tap &quot;Add Device&quot;"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/dark_blue" />
+
+
+    <!-- Step 2 Detail -->
+    <TextView
+        android:id="@+id/step2Detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/step2Header"
+        android:layout_marginTop="4dp"
+        android:text="•  After signing in, tap the “Add Device” option to open the QR code scanner."
+        android:textSize="15sp"
+        android:textColor="@color/dark_blue" />
+
+    <!-- Step 3 Header -->
+    <TextView
+        android:id="@+id/step3Header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/step2Detail"
+        android:layout_marginTop="25dp"
+        android:text="3.  Locate the QR Code on Your Device"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/dark_blue" />
+
+    <!-- Step 3 Detail -->
+    <TextView
+        android:id="@+id/step3Detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/step3Header"
+        android:layout_marginTop="4dp"
+        android:text="•  Find the QR code printed or displayed on the device you want to add."
+        android:textSize="15sp"
+        android:textColor="@color/dark_blue" />
+
+    <!-- Step 4 Header -->
+    <TextView
+        android:id="@+id/step4Header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/step3Detail"
+        android:layout_marginTop="25dp"
+        android:text="4.  Scan the QR Code"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/dark_blue" />
+
+    <!-- Step 4 Detail -->
+    <TextView
+        android:id="@+id/step4Detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/step4Header"
+        android:layout_marginTop="4dp"
+        android:text="•  Use the in-app scanner to scan the QR code on the device."
+        android:textSize="15sp"
+        android:textColor="@color/dark_blue" />
+
+    <!-- Step 5 Header -->
+    <TextView
+        android:id="@+id/step5Header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/step4Detail"
+        android:layout_marginTop="25dp"
+        android:text="5.  Complete Setup"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/dark_blue" />
+
+    <!-- Step 5 Detail -->
+    <TextView
+        android:id="@+id/step5Detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/step5Header"
+        android:layout_marginTop="4dp"
+        android:text="•  Follow the on-screen instructions to finish linking the device to your account."
+        android:textSize="15sp"
+        android:textColor="@color/dark_blue" />
+
+</RelativeLayout>
