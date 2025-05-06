@@ -6,9 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aquamanagers.aquamanage_app.adapters.ChatAdapter
 import com.aquamanagers.aquamanage_app.databinding.ActivityChatSupportBinding
+import com.aquamanagers.aquamanage_app.models.AdminNotification
 import com.aquamanagers.aquamanage_app.models.Message
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.Random
 
 class ChatSupportActivity : AppCompatActivity() {
 
@@ -46,21 +51,27 @@ class ChatSupportActivity : AppCompatActivity() {
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val firstName = snapshot.child("firstName").getValue(String::class.java) ?: ""
-                val middleInitial = snapshot.child("middleInitial").getValue(String::class.java) ?: ""
+                val middleInitial =
+                    snapshot.child("middleInitial").getValue(String::class.java) ?: ""
                 val lastName = snapshot.child("lastName").getValue(String::class.java) ?: ""
                 senderDisplayName = "$firstName $middleInitial. $lastName"
                 customUID = snapshot.child("customUID").getValue(String::class.java) ?: "N/A"
 
                 // Initialize chat adapter after getting customUID
                 chatAdapter = ChatAdapter(messageList, customUID)
-                binding.messagesRecyclerView.layoutManager = LinearLayoutManager(this@ChatSupportActivity)
+                binding.messagesRecyclerView.layoutManager =
+                    LinearLayoutManager(this@ChatSupportActivity)
                 binding.messagesRecyclerView.adapter = chatAdapter
 
                 listenForMessages()
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@ChatSupportActivity, "Failed to fetch user details", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@ChatSupportActivity,
+                    "Failed to fetch user details",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
     }
@@ -77,13 +88,57 @@ class ChatSupportActivity : AppCompatActivity() {
             timestamp = System.currentTimeMillis()
         )
 
-        databaseRef.child(messageId).setValue(message)
-            .addOnSuccessListener {
-                binding.editMessage.setText("")
+        databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val isFirstMessage = !snapshot.exists()
+                databaseRef.child(messageId).setValue(message)
+                    .addOnSuccessListener {
+                        binding.editMessage.setText("")
+                        if (isFirstMessage) {
+                            val customAdminNotificationId = generateAdminNotificationId()
+                            val currentDate = Date()
+                            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                            val formattedDate = dateFormat.format(currentDate)
+                            val createdAt = System.currentTimeMillis()
+                            val adminDatabase = FirebaseDatabase.getInstance().getReference("notificationAdmin").child("newChats")
+                            val userReference = FirebaseDatabase.getInstance().getReference("Users").child(userId)
+
+                            userReference.get().addOnSuccessListener{ snapshot ->
+                                val userId = snapshot.child("customUID").getValue(String::class.java) ?: "N/A"
+                                val chatId = generateChatId()
+
+                                val adminNotification = AdminNotification(
+                                    id = customAdminNotificationId,
+                                    customId = userId,
+                                    date = formattedDate,
+                                    time = createdAt,
+                                    description = "User $userId chatted"
+                                )
+                                adminDatabase.child(chatId).setValue(adminNotification).addOnSuccessListener{
+                                    //TODO
+                                }.addOnFailureListener{ e->
+                                    Toast.makeText(this@ChatSupportActivity, "Failed to send admin notification: ${e.message}",Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(
+                            this@ChatSupportActivity,
+                            "Failed: ${it.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed: ${it.message}", Toast.LENGTH_SHORT).show()
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(
+                    this@ChatSupportActivity,
+                    "Error checking Conversation History",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
+        })
     }
 
     private fun listenForMessages() {
@@ -100,8 +155,30 @@ class ChatSupportActivity : AppCompatActivity() {
             override fun onChildRemoved(snapshot: DataSnapshot) {}
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@ChatSupportActivity, "Failed to load messages.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@ChatSupportActivity,
+                    "Failed to load messages.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
+    }
+
+    private fun generateAdminNotificationId(): String {
+        val allowedChars = "12345abcdeABCDE"
+        val random = Random()
+        val length = 8
+        return (1..length)
+            .map { allowedChars[random.nextInt(allowedChars.length)] }
+            .joinToString("")
+    }
+
+    private fun generateChatId(): String {
+        val allowedChars = "12345abcdeABCDE"
+        val random = Random()
+        val length = 10
+        return (1..length)
+            .map { allowedChars[random.nextInt(allowedChars.length)] }
+            .joinToString("")
     }
 }
