@@ -103,7 +103,7 @@ class NotificationsActivity : AppCompatActivity() {
                 )
 
                 notificationRef.setValue(stopNotification)
-                Toast.makeText(context,"Notification sent",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,"N otification sent",Toast.LENGTH_SHORT).show()
             }.addOnFailureListener { e ->
                 Toast.makeText(context, "Failed to notify: ${e.message}", Toast.LENGTH_SHORT).show()
             }
