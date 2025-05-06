@@ -192,6 +192,7 @@ class RegisterActivity : AppCompatActivity() {
 
                         val adminNotification = AdminNotification(
                             id = customAdminNotificationId,
+                            customId = customUserId,
                             date = formattedDate,
                             time = createdAt,
                             description = "User $customUserId created"

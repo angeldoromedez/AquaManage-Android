@@ -37,8 +37,9 @@ import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import java.util.Random
 import java.util.concurrent.CompletableFuture
 
 
@@ -372,36 +373,55 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                                                         Toast.LENGTH_SHORT
                                                     ).show()
 
+                                                    val currentUser =
+                                                        firebaseAuth.currentUser?.uid ?: "N/A"
                                                     val customAdminNotification =
                                                         generateAdminNotificationId()
                                                     val currentDate = Date()
-                                                    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                                                    val formattedDate = dateFormat.format(currentDate)
-                                                    val registeredAt = System.currentTimeMillis()
-
-                                                    val notificationAdmin = AdminNotification(
-                                                        id = customAdminNotification,
-                                                        date = formattedDate,
-                                                        time = registeredAt,
-                                                        description = ("Device $deviceId added to user $userId")
+                                                    val dateFormat = SimpleDateFormat(
+                                                        "yyyy-MM-dd",
+                                                        Locale.getDefault()
                                                     )
-                                                    adminDatabase.child(deviceId)
-                                                        .setValue(notificationAdmin)
-                                                        .addOnSuccessListener {
-                                                            //TODO
+                                                    val formattedDate =
+                                                        dateFormat.format(currentDate)
+                                                    val registeredAt = System.currentTimeMillis()
+                                                    val userReference =
+                                                        FirebaseDatabase.getInstance()
+                                                            .getReference("Users")
+                                                            .child(currentUser)
+                                                    userReference.get()
+                                                        .addOnSuccessListener { snapshot ->
+                                                            val customUserId =
+                                                                snapshot.child("customUID")
+                                                                    .getValue(String::class.java)
+                                                                    ?: "N/A"
+
+                                                            val notificationAdmin =
+                                                                AdminNotification(
+                                                                    id = customAdminNotification,
+                                                                    customId = customDeviceId,
+                                                                    date = formattedDate,
+                                                                    time = registeredAt,
+                                                                    description = ("Device $customDeviceId added to user $customUserId")
+                                                                )
+                                                            adminDatabase.child(deviceId)
+                                                                .setValue(notificationAdmin)
+                                                                .addOnSuccessListener {
+                                                                    //TODO
+                                                                }.addOnFailureListener { e ->
+                                                                    Toast.makeText(
+                                                                        this,
+                                                                        "Error sending admin notification: ${e.message}",
+                                                                        Toast.LENGTH_SHORT
+                                                                    ).show()
+                                                                }
                                                         }.addOnFailureListener { e ->
-                                                            Toast.makeText(
-                                                                this,
-                                                                "Error sending admin notification: ${e.message}",
-                                                                Toast.LENGTH_SHORT
-                                                            ).show()
-                                                        }
-                                                }.addOnFailureListener { e ->
-                                                    Toast.makeText(
-                                                        this,
-                                                        "Error in registering device to registry: ${e.message}",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
+                                                        Toast.makeText(
+                                                            this,
+                                                            "Error in registering device to registry: ${e.message}",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    }
                                                 }
                                         } else if (!deviceSnapshot.exists())
                                             Toast.makeText(
