@@ -96,7 +96,7 @@ class NotificationsActivity : AppCompatActivity() {
                 val stopNotification = NotificationItem(
                     id = customNotificationId,
                     deviceId = deviceId,
-                    notificationImage = R.drawable.carmela_hi,
+                    notificationImage = R.drawable.treatmenterror,
                     notificationName = "Treatment Stopped",
                     deviceName = deviceName,
                     colorHex = R.color.notification_blue.toString()
@@ -128,7 +128,7 @@ class NotificationsActivity : AppCompatActivity() {
                 val stopNotification = NotificationItem(
                     id = customNotificationId,
                     deviceId = deviceId,
-                    notificationImage = R.drawable.carmela_hi,
+                    notificationImage = R.drawable.treatmentsuccess,
                     notificationName = "Treatment Completed",
                     deviceName = deviceName,
                     colorHex = R.color.notification_blue.toString()
