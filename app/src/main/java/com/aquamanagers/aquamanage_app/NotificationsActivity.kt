@@ -69,13 +69,6 @@ class NotificationsActivity : AppCompatActivity() {
             .joinToString("")
     }
 
-    private fun sendNotification(userId: String, deviceId: String) {
-        val customNotificationId = generateCustomNotificationId()
-        database = FirebaseDatabase.getInstance().getReference("notification").child(userId)
-            .child(customNotificationId)
-
-    }
-
     companion object {
         fun sendStopNotification(context: Context, userId: String, deviceId: String) {
             val customNotificationId = UUID.randomUUID().toString()
@@ -124,6 +117,7 @@ class NotificationsActivity : AppCompatActivity() {
 
             deviceRef.get().addOnSuccessListener { deviceSnapshot ->
                 val deviceName = deviceSnapshot.getValue(String::class.java) ?: "Unknown device"
+                val color = R.color.notification_blue.toString()
 
                 val stopNotification = NotificationItem(
                     id = customNotificationId,
@@ -131,7 +125,7 @@ class NotificationsActivity : AppCompatActivity() {
                     notificationImage = R.drawable.treatmentsuccess,
                     notificationName = "Treatment Completed",
                     deviceName = deviceName,
-                    colorHex = R.color.notification_blue.toString()
+                    colorHex = color
                 )
 
                 notificationRef.setValue(stopNotification)
