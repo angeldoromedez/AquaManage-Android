@@ -20,7 +20,7 @@
         android:id="@+id/editTextDeviceName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
+        android:textColor="@color/dark_blue"
         android:hint="Device Name"
         android:minHeight="48dp" />
 
