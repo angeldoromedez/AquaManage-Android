@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AquaManage_App</string>
+    <string name="app_name">AquaManage</string>
     <string name="login_background">Login display background image.</string>
     <string name="signup_link">Don\'t have an account yet? Sign up.</string>
     <string name="forgot_password">Forgot Password?</string>
