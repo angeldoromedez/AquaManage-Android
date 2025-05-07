@@ -83,4 +83,7 @@
     <string name="possible_usages">Possible Usages</string>
     <string name="for_uses">For uses</string>
     <string name="ok">OK</string>
+    <string name="logo_for_push_notifications">Logo for push notifications</string>
+    <string name="title">Title</string>
+    <string name="push_notification_description">This is the notification description</string>
 </resources>
