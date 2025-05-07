@@ -1,32 +1,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
     android:padding="20dp">
-
-    <!-- Back Button -->
-    <ImageButton
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/baseline_arrow_back_24"
-        android:contentDescription="Back" />
 
     <!-- Title -->
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/backButton"
         android:layout_marginTop="20dp"
         android:text="Can I connect multiple devices?"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/dark_blue" />
 
+    <!-- Answer -->
     <TextView
         android:id="@+id/answer"
         android:layout_width="wrap_content"
@@ -37,5 +26,20 @@
         android:textSize="16sp"
         android:textColor="@color/dark_blue" />
 
+    <!-- OK Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/okButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/answer"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/rounded_button"
+        android:text="OK"
+        android:textColor="#FFFFFF"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp" />
 
 </RelativeLayout>

@@ -60,6 +60,12 @@ class ProfileActivity : AppCompatActivity() {
         binding.editProfileIcon.setOnClickListener {
             showAvatarSelectionDialog()
         }
+
+        // FAQs Button
+        binding.faqsButton.setOnClickListener {
+            startActivity(Intent(this, FaqsActivity::class.java))
+        }
+
     }
 
     private fun fetchUserData() {
