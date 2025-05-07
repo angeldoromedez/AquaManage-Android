@@ -1,9 +1,17 @@
 package com.aquamanagers.aquamanage_app
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.aquamanagers.aquamanage_app.adapters.UsesAdapter
 import com.aquamanagers.aquamanage_app.databinding.ActivityWaterAnalysisBinding
 import com.aquamanagers.aquamanage_app.models.DeviceData
 import com.aquamanagers.aquamanage_app.models.DeviceItem
@@ -20,6 +28,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var binding: ActivityWaterAnalysisBinding
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
 
         firebaseAuth = Firebase.auth
@@ -35,6 +44,12 @@ class WaterAnalysisActivity : AppCompatActivity() {
         val phDeviceItem = deviceItem.phValue
         val tdsDeviceItem = deviceItem.tdsValue
         val turDeviceItem = deviceItem.turbidityValue
+
+        val recyclerView = findViewById<RecyclerView>(R.id.uses_holder)
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+        val images = listOf(R.drawable.housekeeping, R.drawable.laundry, R.drawable.wateringplants)
+        recyclerView.adapter = UsesAdapter(images)
 
         val deviceRegistry =
             FirebaseDatabase.getInstance().getReference("registry").child(userId).child(deviceId).child("deviceName")
@@ -85,9 +100,27 @@ class WaterAnalysisActivity : AppCompatActivity() {
 
         binding.checkWaterQuality.setOnClickListener{
             FirebaseDatabase.getInstance().getReference("esp32").child(deviceId).get().addOnSuccessListener { snapshot->
-                val ph = snapshot.getValue(Double::class.java)
-                val tds = snapshot.getValue(Double::class.java)
-                val turbidity = snapshot.getValue(Double::class.java)
+                val ph = snapshot.child("ph").getValue(Double::class.java)
+                val tds = snapshot.child("tds").getValue(Double::class.java)
+                val turbidity = snapshot.child("turbidity").getValue(Double::class.java)
+
+                val dialogView = layoutInflater.inflate(R.layout.dialog_water_analysis, null)
+                val dialog = AlertDialog.Builder(this).setView(dialogView).create()
+
+                val phTextView: TextView = dialogView.findViewById(R.id.phValueAnalysis)
+                val tdsTextView: TextView = dialogView.findViewById(R.id.tdsValueAnalysis)
+                val turbidityTextView: TextView = dialogView.findViewById(R.id.turbidityValueAnalysis)
+                val okButton: Button = dialogView.findViewById(R.id.okButton)
+
+                phTextView.text = "$ph"
+                tdsTextView.text = "$tds"
+                turbidityTextView.text = "$turbidity"
+
+                okButton.setOnClickListener {
+                    dialog.dismiss()
+                }
+
+                dialog.show()
             }
         }
     }

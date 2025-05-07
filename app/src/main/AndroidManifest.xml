@@ -25,9 +25,6 @@
             android:name=".RemindersActivity"
             android:exported="false" />
         <activity
-            android:name=".ReminderSlider"
-            android:exported="false" />
-        <activity
             android:name=".ChatSupportActivity"
             android:exported="true" />
         <activity
