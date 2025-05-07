@@ -15,6 +15,7 @@
         android:layout_marginTop="40dp"
         android:layout_marginStart="10dp"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:background="@android:color/transparent"
         android:src="@drawable/baseline_arrow_back_24"
         android:contentDescription="Back" />
@@ -179,25 +180,14 @@
         android:id="@+id/progressBar"
         style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
         android:layout_width="250dp"
-        android:layout_height="20dp"
+        android:layout_height="50dp"
         android:progress="64"
         android:max="100"
         android:progressDrawable="@drawable/custom_progress"
         android:layout_below="@id/treatmentTitle"
         android:layout_centerHorizontal="true"
+        android:indeterminate="true"
         android:layout_marginTop="40dp"/>
-
-    <TextView
-        android:id="@+id/progressPercentage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="64%"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:layout_toEndOf="@id/progressBar"
-        android:layout_alignBottom="@id/progressBar"
-        android:layout_marginStart="10dp"/>
 
     <LinearLayout
         android:id="@+id/buttonContainer"

@@ -2,7 +2,11 @@ package com.aquamanagers.aquamanage_app
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.Gravity
+import android.view.View
+import android.view.WindowManager
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -12,53 +16,153 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aquamanagers.aquamanage_app.adapters.UsesAdapter
 import com.aquamanagers.aquamanage_app.databinding.ActivityWaterAnalysisBinding
 import com.aquamanagers.aquamanage_app.models.DeviceItem
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.text.DecimalFormat
 
-@Suppress("DEPRECATION")
 class WaterAnalysisActivity : AppCompatActivity() {
-    private lateinit var firebaseAuth: FirebaseAuth
+
     private lateinit var binding: ActivityWaterAnalysisBinding
     private lateinit var deviceRef: DatabaseReference
+    private lateinit var registryRef: DatabaseReference
+    private lateinit var progressBar: ProgressBar
     private var userId: String? = null
     private var deviceId: String? = null
 
-    @SuppressLint("MissingInflatedId")
+    private val decimalFormat = DecimalFormat("#.##")
+    private var initialPhValue = 0.0
+    private var initialTdsValue = 0.0
+    private var initialTurbidityValue = 0.0
+    private var isChecking = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWaterAnalysisBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        firebaseAuth = Firebase.auth
-        userId = firebaseAuth.currentUser?.uid ?: return
-
-        val deviceItem = intent.getParcelableExtra<DeviceItem>("deviceItem")
-        deviceId = deviceItem?.id ?: return
-
-        setupDeviceInfo(deviceItem)
+        initializeFirebase()
+        setupDeviceFromIntent()
         setupButtons()
+        setupRealtimeUpdates()
+
+        progressBar = binding.progressBar
+        progressBar.visibility = View.GONE
     }
 
-    private fun setupDeviceInfo(deviceItem: DeviceItem) {
-        val deviceRegistry = FirebaseDatabase.getInstance().getReference("registry").child(userId!!)
-            .child(deviceId!!).child("deviceName")
+    private fun initializeFirebase() {
+        userId = FirebaseAuth.getInstance().currentUser?.uid
+    }
 
-        deviceRegistry.get().addOnSuccessListener { snapshot ->
-            binding.deviceTitle.text = snapshot.getValue(String::class.java) ?: "Device 1"
-        }.addOnFailureListener { e ->
-            Toast.makeText(this, "Failed to fetch device data: ${e.message}", Toast.LENGTH_SHORT)
-                .show()
+    private fun setupDeviceFromIntent() {
+        val deviceItem = intent.getParcelableExtra<DeviceItem>("deviceItem")
+        deviceId = deviceItem?.id ?: run {
+            showToast("Invalid device")
+            finish()
+            return
         }
 
-        binding.phValue.text = deviceItem.phValue
-        binding.tdsValue.text = deviceItem.tdsValue
-        binding.turbidityValue.text = deviceItem.turbidityValue
+        deviceRef = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId!!)
+        registryRef = FirebaseDatabase.getInstance().getReference("registry").child(userId!!)
+            .child(deviceId!!)
+
+        updateDeviceInfo(deviceItem)
+        fetchDeviceName()
+    }
+
+    private fun setupButtons() {
+        binding.btnStart.setOnClickListener { startWaterAnalysis() }
+        binding.btnStop.setOnClickListener { stopWaterAnalysis() }
+        binding.checkWaterQuality.setOnClickListener { showWaterQualityDialog() }
+    }
+
+    private fun setupRealtimeUpdates() {
+        clearRealtimeListeners()
+        deviceRef.child("ph").addValueEventListener(createRealtimeListener(binding.phValue))
+        deviceRef.child("tds").addValueEventListener(createRealtimeListener(binding.tdsValue))
+        deviceRef.child("turbidity")
+            .addValueEventListener(createRealtimeListener(binding.turbidityValue))
+    }
+
+    private fun createRealtimeListener(textView: TextView): ValueEventListener {
+        return object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val value =
+                    snapshot.getValue(Double::class.java)?.let { decimalFormat.format(it) } ?: "0.0"
+                textView.text = value
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                showToast("Realtime update error: ${error.message}")
+            }
+        }
+    }
+
+    private fun startWaterAnalysis() {
+        isChecking = true
+        progressBar.visibility = View.VISIBLE
+        deviceRef.child("controls").setValue(1).addOnSuccessListener {
+            showToast("Analysis started")
+            setupAnalysisMonitoring()
+        }.addOnFailureListener { showToast("Failed to start analysis: ${it.message}")
+        progressBar.visibility = View.GONE}
+    }
+
+    private fun setupAnalysisMonitoring() {
+        deviceRef.child("ph").get().addOnSuccessListener {
+            initialPhValue = it.getValue(Double::class.java) ?: 0.0
+        }
+        deviceRef.child("tds").get().addOnSuccessListener {
+            initialTdsValue = it.getValue(Double::class.java) ?: 0.0
+        }
+
+        deviceRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val ph = snapshot.child("ph").getValue(Double::class.java) ?: 0.0
+                val tds = snapshot.child("tds").getValue(Double::class.java) ?: 0.0
+                val turbidity = snapshot.child("turbidity").getValue(Double::class.java) ?: 0.0
+
+                if (ph != initialPhValue || tds != initialTdsValue || turbidity != initialTurbidityValue) {
+                    completeAnalysisSuccessfully()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    private fun completeAnalysisSuccessfully() {
+        isChecking = false
+        progressBar.visibility = View.GONE
+        deviceRef.child("controls").setValue(0)
+        NotificationsActivity.sendCompleteNotification(this, userId!!, deviceId!!)
+        showToast("Analysis completed successfully")
+    }
+
+    private fun stopWaterAnalysis() {
+        isChecking = false
+        progressBar.visibility = View.GONE
+        deviceRef.child("controls").setValue(0).addOnSuccessListener {
+            NotificationsActivity.sendStopNotification(this, userId!!, deviceId!!)
+            showToast("Analysis stopped")
+        }
+    }
+
+    private fun fetchDeviceName() {
+        registryRef.child("deviceName").get().addOnSuccessListener { snapshot ->
+            binding.deviceTitle.text = snapshot.getValue(String::class.java) ?: "Unknown Device"
+        }
+    }
+
+    private fun updateDeviceInfo(deviceItem: DeviceItem) {
+        binding.apply {
+            phValue.text = deviceItem.phValue
+            tdsValue.text = deviceItem.tdsValue
+            turbidityValue.text = deviceItem.turbidityValue
+        }
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
@@ -72,60 +176,15 @@ class WaterAnalysisActivity : AppCompatActivity() {
         recyclerView.adapter = UsesAdapter(images)
     }
 
-    private fun setupButtons() {
-        binding.btnStart.setOnClickListener {
-            startWaterAnalysis()
-        }
-
-        binding.btnStop.setOnClickListener {
-            stopWaterAnalysis()
-        }
-
-        binding.checkWaterQuality.setOnClickListener {
-            showWaterQualityDialog()
-        }
-    }
-
-    private fun startWaterAnalysis() {
-        deviceRef = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId!!)
-        deviceRef.child("controls").setValue(1).addOnSuccessListener {
-            deviceRef.addValueEventListener(object:ValueEventListener{
-                override fun onDataChange(snapshot: DataSnapshot){
-                    val ph = snapshot.child("ph").getValue(Double::class.java)
-                    val turbidity = snapshot.child("turbidity").getValue(Double::class.java)
-                    val tds = snapshot.child("tds").getValue(Double::class.java)
-
-                    if ((ph ?: 0.0) > 0 || (turbidity ?: 0.0) > 0 || (tds ?: 0.0) > 0) {
-                        NotificationsActivity.sendCompleteNotification(this@WaterAnalysisActivity, userId!!, deviceId!!)
-                        deviceRef.removeEventListener(this)
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(this@WaterAnalysisActivity, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
-                }
-            })
-        }
-    }
-
-
-    private fun stopWaterAnalysis() {
-        FirebaseDatabase.getInstance().getReference("esp32").child(deviceId!!).child("controls")
-            .setValue(0)
-            .addOnSuccessListener {
-                NotificationsActivity.sendStopNotification(this, userId!!, deviceId!!)
-            }
-    }
-
     @SuppressLint("InflateParams", "SetTextI18n")
     private fun showWaterQualityDialog() {
         deviceRef = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId!!)
         deviceRef.get().addOnSuccessListener { snapshot ->
-            val ph = snapshot.child("ph").getValue(Double::class.java)?: 0.0
-            val tds = snapshot.child("tds").getValue(Double::class.java)?: 0.0
-            val turbidity = snapshot.child("turbidity").getValue(Double::class.java)?: 0.0
+            val ph = snapshot.child("ph").getValue(Double::class.java) ?: 0.0
+            val tds = snapshot.child("tds").getValue(Double::class.java) ?: 0.0
+            val turbidity = snapshot.child("turbidity").getValue(Double::class.java) ?: 0.0
 
-            val dialogView = layoutInflater.inflate(R.layout.dialog_water_analysis,null)
+            val dialogView = layoutInflater.inflate(R.layout.dialog_water_analysis, null)
             val phTextView: TextView = dialogView.findViewById(R.id.phValueAnalysis)
             val tdsTextView: TextView = dialogView.findViewById(R.id.tdsValueAnalysis)
             val turbidityTextView: TextView = dialogView.findViewById(R.id.turbidityValueAnalysis)
@@ -142,12 +201,37 @@ class WaterAnalysisActivity : AppCompatActivity() {
                 .setView(dialogView)
                 .create()
 
-            okButton.setOnClickListener{
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show()
+
+            dialog.window?.setLayout(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+            dialog.window?.setGravity(Gravity.CENTER)
+
+            okButton.setOnClickListener {
                 dialog.dismiss()
             }
-            dialog.show()
-        }.addOnFailureListener{ e->
-            Toast.makeText(this, "Failed to get water quality: ${e.message}", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, "Failed to get water quality: ${e.message}", Toast.LENGTH_SHORT)
+                .show()
         }
+    }
+
+    private fun clearRealtimeListeners() {
+        deviceRef.removeEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {}
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        clearRealtimeListeners()
     }
 }

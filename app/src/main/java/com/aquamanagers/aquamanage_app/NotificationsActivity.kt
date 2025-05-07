@@ -1,8 +1,15 @@
 package com.aquamanagers.aquamanage_app
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aquamanagers.aquamanage_app.adapters.NotificationAdapter
 import com.aquamanagers.aquamanage_app.databinding.ActivityNotificationsBinding
@@ -13,9 +20,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
 import java.util.Random
 import java.util.UUID
-import android.content.Context
 
 
 class NotificationsActivity : AppCompatActivity() {
@@ -95,11 +103,57 @@ class NotificationsActivity : AppCompatActivity() {
                     colorHex = R.color.notification_blue.toString()
                 )
 
-                notificationRef.setValue(stopNotification)
-                Toast.makeText(context,"Notification sent",Toast.LENGTH_SHORT).show()
-            }.addOnFailureListener { e ->
-                Toast.makeText(context, "Failed to notify: ${e.message}", Toast.LENGTH_SHORT).show()
+                notificationRef.setValue(stopNotification).addOnSuccessListener {
+                    showLocalNotification(
+                        context,
+                        "Treatment Stopped",
+                        "Device $deviceName has stopped treatment"
+                    )
+                    Toast.makeText(context, "Notification stopped", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener { e ->
+                    Toast.makeText(context, "Failed to notify: ${e.message}", Toast.LENGTH_SHORT)
+                        .show()
+                    Toast.makeText(context, "Notification sent", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener { e ->
+                    Toast.makeText(context, "Failed to notify: ${e.message}", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
+        }
+
+        private fun showLocalNotification(context: Context, title: String, message: String) {
+            val intent = Intent(context, NotificationsActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+
+            val pendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+
+            val channelId = "aquamanager_local_notifications"
+            val notificationBuilder = NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.app)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(
+                    channelId,
+                    "Local Alerts",
+                    NotificationManager.IMPORTANCE_HIGH
+                )
+                notificationManager.createNotificationChannel(channel)
+            }
+
+            notificationManager.notify(0, notificationBuilder.build())
         }
 
         fun sendCompleteNotification(context: Context, userId: String, deviceId: String) {
@@ -109,6 +163,16 @@ class NotificationsActivity : AppCompatActivity() {
                 .child(userId)
                 .child(customNotificationId)
 
+            FirebaseMessaging.getInstance().token.addOnSuccessListener { deviceToken ->
+                val message = RemoteMessage.Builder("$deviceToken@fcm.googleapis.com")
+                    .setMessageId(customNotificationId)
+                    .addData("title", "Treatment Stopped")
+                    .addData("body", "Your device $deviceId has stopped treatment.")
+                    .build()
+
+                FirebaseMessaging.getInstance().send(message)
+            }
+
             val deviceRef = FirebaseDatabase
                 .getInstance()
                 .getReference("registry")
@@ -117,7 +181,6 @@ class NotificationsActivity : AppCompatActivity() {
 
             deviceRef.get().addOnSuccessListener { deviceSnapshot ->
                 val deviceName = deviceSnapshot.getValue(String::class.java) ?: "Unknown device"
-                val color = R.color.notification_blue.toString()
 
                 val stopNotification = NotificationItem(
                     id = customNotificationId,
@@ -125,13 +188,23 @@ class NotificationsActivity : AppCompatActivity() {
                     notificationImage = R.drawable.treatmentsuccess,
                     notificationName = "Treatment Completed",
                     deviceName = deviceName,
-                    colorHex = color
+                    colorHex = R.color.notification_blue.toString()
                 )
-
-                notificationRef.setValue(stopNotification)
-                Toast.makeText(context,"Notification sent",Toast.LENGTH_SHORT).show()
-            }.addOnFailureListener { e ->
-                Toast.makeText(context, "Failed to notify: ${e.message}", Toast.LENGTH_SHORT).show()
+                notificationRef.setValue(stopNotification).addOnSuccessListener {
+                    showLocalNotification(
+                        context,
+                        "Treatment Completed",
+                        "Device $deviceName has completed treatment"
+                    )
+                    Toast.makeText(context, "Notification stopped", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener { e ->
+                    Toast.makeText(context, "Failed to notify: ${e.message}", Toast.LENGTH_SHORT)
+                        .show()
+                    Toast.makeText(context, "Notification sent", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener { e ->
+                    Toast.makeText(context, "Failed to notify: ${e.message}", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
         }
 
