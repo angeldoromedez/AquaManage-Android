@@ -29,10 +29,8 @@ class ProfileActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().getReference("Users")
 
-        // Fetch user data from Realtime Database
         fetchUserData()
 
-        // Logout Button
         binding.logoutButton.setOnClickListener {
             firebaseAuth.signOut()
             startActivity(Intent(this, LoginActivity::class.java).apply {
@@ -41,36 +39,29 @@ class ProfileActivity : AppCompatActivity() {
             finish()
         }
 
-        // Change Password Button
         binding.changePassButton.setOnClickListener {
             startActivity(Intent(this, ChangePassword::class.java))
         }
 
-        // Back Arrow Button
         binding.backArrow.setOnClickListener {
             finish()
         }
 
-        // Tech Support Button
         binding.TechSupport.setOnClickListener {
             startActivity(Intent(this, ChatSupportActivity::class.java))
         }
 
-        // Avatar Edit Icon Click
         binding.editProfileIcon.setOnClickListener {
             showAvatarSelectionDialog()
         }
 
-        // FAQs Button
         binding.faqsButton.setOnClickListener {
             startActivity(Intent(this, FaqsActivity::class.java))
         }
-
     }
 
     private fun fetchUserData() {
         val userId = firebaseAuth.currentUser?.uid
-
         if (userId != null) {
             database.child(userId).get().addOnSuccessListener { snapshot ->
                 if (snapshot.exists()) {
@@ -85,7 +76,6 @@ class ProfileActivity : AppCompatActivity() {
                         "$firstName $lastName"
                     }
 
-                    // Display user data
                     binding.userName.text = userName
                     binding.userEmail.text = userEmail
                 } else {
@@ -99,7 +89,6 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    // Avatar selection dialog with GridView
     private fun showAvatarSelectionDialog() {
         val avatars = listOf(
             R.drawable.ava_a, R.drawable.ava_b, R.drawable.ava_c, R.drawable.ava_d, R.drawable.ava_e,
@@ -117,15 +106,12 @@ class ProfileActivity : AppCompatActivity() {
 
         val adapter = AvatarAdapter(avatars) { selectedAvatarResId ->
             binding.profileImage.setImageResource(selectedAvatarResId)
-
-            val prefs = getSharedPreferences("ProfileAvatar", MODE_PRIVATE)
+            val prefs = getSharedPreferences("AppPreferences", MODE_PRIVATE)
             prefs.edit().putInt("selectedAvatar", selectedAvatarResId).apply()
             alertDialog.dismiss()
         }
 
         recyclerView.adapter = adapter
-
         alertDialog.show()
     }
 }
-
