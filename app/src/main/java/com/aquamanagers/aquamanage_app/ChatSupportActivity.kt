@@ -100,11 +100,16 @@ class ChatSupportActivity : AppCompatActivity() {
                             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                             val formattedDate = dateFormat.format(currentDate)
                             val createdAt = System.currentTimeMillis()
-                            val adminDatabase = FirebaseDatabase.getInstance().getReference("notificationAdmin").child("newChats")
-                            val userReference = FirebaseDatabase.getInstance().getReference("Users").child(userId)
+                            val adminDatabase =
+                                FirebaseDatabase.getInstance().getReference("notificationAdmin")
+                                    .child("newChats")
+                            val userReference =
+                                FirebaseDatabase.getInstance().getReference("Users").child(userId)
 
-                            userReference.get().addOnSuccessListener{ snapshot ->
-                                val userId = snapshot.child("customUID").getValue(String::class.java) ?: "N/A"
+                            userReference.get().addOnSuccessListener { snapshot ->
+                                val userId =
+                                    snapshot.child("customUID").getValue(String::class.java)
+                                        ?: "N/A"
                                 val chatId = generateChatId()
 
                                 val adminNotification = AdminNotification(
@@ -114,10 +119,15 @@ class ChatSupportActivity : AppCompatActivity() {
                                     time = createdAt,
                                     description = "User $userId chatted"
                                 )
-                                adminDatabase.child(chatId).setValue(adminNotification).addOnSuccessListener{
-                                    //TODO
-                                }.addOnFailureListener{ e->
-                                    Toast.makeText(this@ChatSupportActivity, "Failed to send admin notification: ${e.message}",Toast.LENGTH_SHORT).show()
+                                adminDatabase.child(chatId).setValue(adminNotification)
+                                    .addOnSuccessListener {
+                                        //TODO
+                                    }.addOnFailureListener { e ->
+                                    Toast.makeText(
+                                        this@ChatSupportActivity,
+                                        "Failed to send admin notification: ${e.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         }
