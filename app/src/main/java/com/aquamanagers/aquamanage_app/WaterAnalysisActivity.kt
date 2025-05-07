@@ -91,11 +91,11 @@ class WaterAnalysisActivity : AppCompatActivity() {
         deviceRef.child("controls").setValue(1).addOnSuccessListener {
             deviceRef.addValueEventListener(object:ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot){
-                    val ph = snapshot.child("ph").getValue(Double::class.java)?: 0.0
-                    val turbidity = snapshot.child("turbidity").getValue(Double::class.java)?: 0.0
-                    val tds = snapshot.child("tds").getValue(Double::class.java)?: 0.0
+                    val ph = snapshot.child("ph").getValue(Double::class.java)
+                    val turbidity = snapshot.child("turbidity").getValue(Double::class.java)
+                    val tds = snapshot.child("tds").getValue(Double::class.java)
 
-                    if (ph > 0 || turbidity > 0 || tds > 0) {
+                    if ((ph ?: 0.0) > 0 || (turbidity ?: 0.0) > 0 || (tds ?: 0.0) > 0) {
                         NotificationsActivity.sendCompleteNotification(this@WaterAnalysisActivity, userId!!, deviceId!!)
                         deviceRef.removeEventListener(this)
                     }

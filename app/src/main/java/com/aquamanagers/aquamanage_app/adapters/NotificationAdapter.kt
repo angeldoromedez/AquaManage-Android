@@ -19,7 +19,6 @@ class NotificationAdapter(
         val imageView: ImageView = view.findViewById(R.id.notificationImage)
         val messageView: TextView = view.findViewById(R.id.notificationMessage)
         val deviceNameView: TextView = view.findViewById(R.id.deviceName)
-        val container: RelativeLayout = view.findViewById(R.id.notificationCard) // optional if you want to apply background color dynamically
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
