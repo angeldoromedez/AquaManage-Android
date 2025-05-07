@@ -11,7 +11,7 @@ data class DeviceItem(val id: String,
                       var colorHex: String,
 ):Parcelable {
     constructor(parcel: Parcel): this(
-        parcel.readString() ?: "Device",
+        parcel.readString() ?: "ESP32",
         parcel.readString() ?: "0",
         parcel.readString()?:"0",
         parcel.readString()?:"0",

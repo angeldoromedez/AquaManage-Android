@@ -1,5 +1,6 @@
 package com.aquamanagers.aquamanage_app
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -50,15 +51,9 @@ class WaterAnalysisActivity : AppCompatActivity() {
         binding.turbidityValue.text = turDeviceItem
 
         binding.btnStart.setOnClickListener {
-            val resetDefault = DeviceData(
-                controls = 1,
-                ph = 0.0,
-                tds = 0.0,
-                turbidity = 0.0
-            )
             val deviceRef = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId)
-            FirebaseDatabase.getInstance().getReference("esp32").child(deviceId)
-                .setValue(resetDefault)
+            FirebaseDatabase.getInstance().getReference("esp32").child(deviceId).child("controls")
+                .setValue(1)
                 .addOnSuccessListener{
                     deviceRef.addValueEventListener(object: ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
@@ -67,7 +62,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
                             val tds = snapshot.child("tds").getValue(Double::class.java)
 
                             if ((ph ?: 0.0) > 0 || (turbidity ?: 0.0) > 0 || (tds ?: 0.0) > 0) {
-                                NotificationsActivity.sendStopNotification(this@WaterAnalysisActivity, userId, deviceId)
+                                NotificationsActivity.sendCompleteNotification(this@WaterAnalysisActivity, userId, deviceId)
                                 deviceRef.removeEventListener(this)
                             }
                         }
@@ -86,6 +81,14 @@ class WaterAnalysisActivity : AppCompatActivity() {
                 .addOnSuccessListener {
                     NotificationsActivity.sendStopNotification(this,userId, deviceId)
                 }
+        }
+
+        binding.checkWaterQuality.setOnClickListener{
+            FirebaseDatabase.getInstance().getReference("esp32").child(deviceId).get().addOnSuccessListener { snapshot->
+                val ph = snapshot.getValue(Double::class.java)
+                val tds = snapshot.getValue(Double::class.java)
+                val turbidity = snapshot.getValue(Double::class.java)
+            }
         }
     }
 }

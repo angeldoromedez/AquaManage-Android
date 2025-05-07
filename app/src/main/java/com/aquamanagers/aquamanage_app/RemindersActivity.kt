@@ -2,18 +2,15 @@ package com.aquamanagers.aquamanage_app
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import androidx.activity.enableEdgeToEdge
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.aquamanagers.aquamanage_app.adapters.ReminderAdapter
 
 class RemindersActivity : AppCompatActivity() {
 
     private lateinit var viewPager: ViewPager2
-    private lateinit var btnNext: Button
+    private lateinit var btnNext: ImageButton
 
     private val layouts = arrayOf(
         R.layout.reminder_a,
@@ -47,7 +44,10 @@ class RemindersActivity : AppCompatActivity() {
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                btnNext.text = if (position == layouts.lastIndex) "Done" else "Next"
+                if(position == layouts.lastIndex)
+                    btnNext.setImageResource(R.drawable.ic_arrow_right)
+                else
+                    btnNext.setImageResource(R.drawable.ic_done_symbol)
             }
         })
     }
