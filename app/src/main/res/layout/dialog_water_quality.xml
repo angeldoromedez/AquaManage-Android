@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
     android:layout_margin="16dp"
-    app:cardCornerRadius="20dp"
-    app:cardPreventCornerOverlap="false"
-    app:cardUseCompatPadding="true"
-    app:cardElevation="6dp">
+    android:background="@drawable/dialog_water_analysis_background"
+    android:gravity="center_horizontal"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:padding="16dp">
+        android:gravity="center"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/analysisTitle"
@@ -24,44 +20,49 @@
             android:layout_height="wrap_content"
             android:padding="15dp"
             android:text="@string/water_quality_analysis"
-            android:textSize="18sp"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <LinearLayout
             android:id="@+id/gridHolder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:id="@+id/labelHolders"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginEnd="8dp">
+                android:layout_marginEnd="8dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:text="@string/ph_level"
-                    android:textSize="18sp" />
+                    android:textColor="@color/black"
+                    android:textSize="23sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:text="@string/tds"
-                    android:textSize="18sp" />
+                    android:textColor="@color/black"
+                    android:textSize="23sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:text="@string/turbidity"
-                    android:textSize="18sp" />
+                    android:textColor="@color/black"
+                    android:textSize="23sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -76,7 +77,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:text="@string/_0"
-                    android:textSize="18sp" />
+                    android:textColor="@color/black"
+                    android:textSize="23sp" />
 
                 <TextView
                     android:id="@+id/tdsValueAnalysis"
@@ -84,7 +86,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:text="@string/_0"
-                    android:textSize="18sp" />
+                    android:textColor="@color/black"
+                    android:textSize="23sp" />
 
                 <TextView
                     android:id="@+id/turbidityValueAnalysis"
@@ -92,7 +95,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:text="@string/_0"
-                    android:textSize="18sp" />
+                    android:textColor="@color/black"
+                    android:textSize="23sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -100,28 +104,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/possible_usages"
-            android:textStyle="bold"
-            android:textSize="18sp"/>
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <ImageView
             android:id="@+id/uses_holder"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:contentDescription="@string/for_uses"
             android:orientation="horizontal"
             android:scrollbars="horizontal"
-            android:contentDescription="@string/for_uses"
-            android:layout_marginVertical="10dp" />
+            android:src="@drawable/wateringplants" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/okButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ok"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/rounded_button"
-            android:layout_gravity="center"
-            android:layout_marginVertical="20dp"/>
+            android:text="@string/ok"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</ScrollView>

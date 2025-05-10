@@ -21,7 +21,8 @@
         android:layout_marginTop="3dp"
         android:text="@string/device_name"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@color/black" />
 
     <LinearLayout
         android:layout_width="110dp"
@@ -60,7 +61,8 @@
                 android:layout_gravity="start"
                 android:layout_marginBottom="10dp"
                 android:text="@string/ph_level"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@color/black"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -68,7 +70,8 @@
                 android:layout_gravity="start"
                 android:layout_marginBottom="10dp"
                 android:text="@string/tds"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@color/black" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -76,7 +79,8 @@
                 android:layout_gravity="start"
                 android:layout_marginBottom="10dp"
                 android:text="@string/turbidity"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@color/black" />
         </LinearLayout>
 
         <LinearLayout
@@ -94,7 +98,8 @@
                 android:layout_gravity="start"
                 android:layout_marginBottom="10dp"
                 android:text="@string/_0"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/tdsValueHolder"
@@ -103,7 +108,8 @@
                 android:layout_gravity="start"
                 android:layout_marginBottom="10dp"
                 android:text="@string/_0"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/turbidityValueHolder"
@@ -112,7 +118,8 @@
                 android:layout_gravity="start"
                 android:layout_marginBottom="10dp"
                 android:text="@string/_0"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@color/black" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
