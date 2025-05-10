@@ -86,4 +86,14 @@
     <string name="logo_for_push_notifications">Logo for push notifications</string>
     <string name="title">Title</string>
     <string name="push_notification_description">This is the notification description</string>
+    <string name="treatment_complete_dialog_popup">Treatment complete dialog popup</string>
+    <string name="treatment_complete">TREATMENT \n COMPLETE!</string>
+    <string name="show_analysis">Show \n Analysis</string>
+    <string name="edit_device">Edit Device</string>
+    <string name="color">Color:</string>
+    <string name="close">Close</string>
+    <string name="add_a_device">Add a Device</string>
+    <string name="scan_qr_code_of_the_device">Scan QR Code of the Device</string>
+    <string name="open_qr_scanner">Open QR Scanner</string>
+    <string name="plus_button">+</string>
 </resources>

@@ -1,19 +1,18 @@
+@file:Suppress("DEPRECATION")
+
 package com.aquamanagers.aquamanage_app
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.ViewFlipper
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.aquamanagers.aquamanage_app.adapters.UsesAdapter
 import com.aquamanagers.aquamanage_app.databinding.ActivityWaterAnalysisBinding
 import com.aquamanagers.aquamanage_app.models.DeviceItem
 import com.google.firebase.auth.FirebaseAuth
@@ -139,6 +138,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
         progressBar.visibility = View.GONE
         deviceRef.child("controls").setValue(0)
         NotificationsActivity.sendCompleteNotification(this, userId!!, deviceId!!)
+        showWaterAnalysisDialog()
         showToast("Analysis completed successfully")
     }
 
@@ -165,57 +165,73 @@ class WaterAnalysisActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupRecyclerView(recyclerView: RecyclerView) {
-        val images = listOf(
-            R.drawable.housekeeping,
-            R.drawable.wateringplants,
-            R.drawable.laundry
-        )
-        recyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView.adapter = UsesAdapter(images)
-    }
+    @SuppressLint("InflateParams", "SetTextI18n", "DefaultLocale")
+    private fun showWaterAnalysisDialog() {
+        val dialog = AlertDialog.Builder(this).create()
+        val inflater = LayoutInflater.from(this)
+        val dialogView = inflater.inflate(R.layout.dialog_treatment_complete, null)
 
-    @SuppressLint("InflateParams", "SetTextI18n")
-    private fun showWaterQualityDialog() {
+        val viewFlipper:ViewFlipper = dialogView.findViewById(R.id.dialogViewFlipper)
+        val btnShowAnalysis: Button = dialogView.findViewById(R.id.btnShowAnalysis)
+
+        btnShowAnalysis.setOnClickListener{
+            viewFlipper.showNext()
+        }
+
         deviceRef = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId!!)
-        deviceRef.get().addOnSuccessListener { snapshot ->
+        deviceRef.get().addOnSuccessListener{ snapshot ->
             val ph = snapshot.child("ph").getValue(Double::class.java) ?: 0.0
             val tds = snapshot.child("tds").getValue(Double::class.java) ?: 0.0
             val turbidity = snapshot.child("turbidity").getValue(Double::class.java) ?: 0.0
 
-            val dialogView = layoutInflater.inflate(R.layout.dialog_water_analysis, null)
-            val phTextView: TextView = dialogView.findViewById(R.id.phValueAnalysis)
-            val tdsTextView: TextView = dialogView.findViewById(R.id.tdsValueAnalysis)
-            val turbidityTextView: TextView = dialogView.findViewById(R.id.turbidityValueAnalysis)
+            val phTextView:TextView = dialogView.findViewById(R.id.phValueAnalysis)
+            val tdsTextView:TextView = dialogView.findViewById(R.id.tdsValueAnalysis)
+            val turbidityTextView:TextView = dialogView.findViewById(R.id.turbidityValueAnalysis)
+
+            phTextView.text = String.format("%.2f", ph)
+            tdsTextView.text = String.format("%.2f", tds)
+            turbidityTextView.text = String.format("%.2f", turbidity)
+        }.addOnFailureListener{e ->
+            Toast.makeText(this, "Failed to get water quality: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+
+        dialog.setView(dialogView)
+        dialog.setCancelable(true)
+        dialog.show()
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun showWaterQualityDialog() {
+        deviceRef = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId!!)
+        deviceRef.get().addOnSuccessListener{ snapshot ->
+            val ph = snapshot.child("ph").getValue(Double::class.java) ?: 0.0
+            val tds = snapshot.child("tds").getValue(Double::class.java) ?: 0.0
+            val turbidity = snapshot.child("turbidity").getValue(Double::class.java) ?: 0.0
+
+            val dialog = AlertDialog.Builder(this).create()
+            val inflater = LayoutInflater.from(this)
+            val dialogView = inflater.inflate(R.layout.dialog_water_quality, null)
+
+            val phTextView:TextView = dialogView.findViewById(R.id.phValueAnalysis)
+            val tdsTextView:TextView = dialogView.findViewById(R.id.tdsValueAnalysis)
+            val turbidityTextView:TextView = dialogView.findViewById(R.id.turbidityValueAnalysis)
             val okButton: Button = dialogView.findViewById(R.id.okButton)
-            val recyclerView: RecyclerView = dialogView.findViewById(R.id.uses_holder)
 
-            phTextView.text = ph.toString()
-            tdsTextView.text = tds.toString()
-            turbidityTextView.text = turbidity.toString()
-
-            setupRecyclerView(recyclerView)
-
-            val dialog = AlertDialog.Builder(this)
-                .setView(dialogView)
-                .create()
-
-            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.setView(dialogView)
+            dialog.setCancelable(true)
             dialog.show()
 
-            dialog.window?.setLayout(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT
-            )
-            dialog.window?.setGravity(Gravity.CENTER)
-
-            okButton.setOnClickListener {
+            okButton.setOnClickListener{
                 dialog.dismiss()
             }
-        }.addOnFailureListener { e ->
-            Toast.makeText(this, "Failed to get water quality: ${e.message}", Toast.LENGTH_SHORT)
-                .show()
+
+            phTextView.text = String.format("%.2f", ph)
+            tdsTextView.text = String.format("%.2f", tds)
+            turbidityTextView.text = String.format("%.2f", turbidity)
+
+
+        }.addOnFailureListener{e ->
+            Toast.makeText(this, "Failed to get water quality: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 

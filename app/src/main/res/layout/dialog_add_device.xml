@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="24dp"
-    android:background="@color/blue"
+    android:background="@drawable/add_device_backgroud"
     android:orientation="vertical"
     android:layout_gravity="center">
 
@@ -14,24 +15,25 @@
         android:src="@drawable/close"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:contentDescription="Close" />
+        android:contentDescription="@string/close" />
 
     <TextView
         android:id="@+id/dialog_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add a Device"
+        android:text="@string/add_a_device"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@color/white"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        tools:ignore="RelativeOverlap" />
 
     <TextView
         android:id="@+id/dialog_subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Scan QR Code of the Device"
+        android:text="@string/scan_qr_code_of_the_device"
         android:textSize="14sp"
         android:textColor="@android:color/white"
         android:layout_below="@id/dialog_title"
@@ -42,7 +44,7 @@
         android:id="@+id/open_qr_scanner_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Open QR Scanner"
+        android:text="@string/open_qr_scanner"
         android:textColor="@android:color/white"
         android:background="@drawable/rounded_button"
         android:layout_below="@id/dialog_subtitle"
