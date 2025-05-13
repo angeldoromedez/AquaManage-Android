@@ -99,4 +99,7 @@
     <string name="notifications">Notifications</string>
     <string name="view_details">View Details</string>
     <string name="delete_notification">Delete Notification</string>
+    <string name="history">History</string>
+    <string name="last_recognized_treatment">Last recognized treatment</string>
+    <string name="timestamp">Timestamp</string>
 </resources>

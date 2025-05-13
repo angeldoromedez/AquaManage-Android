@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:id="@+id/deviceHistory"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="20dp"
+    app:cardElevation="4dp"
+    app:cardPreventCornerOverlap="false"
+    app:cardUseCompatPadding="true"
+    card_view:cardCornerRadius="40dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/deviceTitleHolder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="3dp"
+            android:text="@string/device_name"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lastTreatment"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/last_recognized_treatment"
+            android:textSize="16sp"
+            android:layout_below="@id/deviceTitleHolder"
+            android:layout_marginStart="15dp"/>
+
+        <TextView
+            android:id="@+id/deviceHistoryTimestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/deviceTitleHolder"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="15dp"
+            android:text="@string/timestamp"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

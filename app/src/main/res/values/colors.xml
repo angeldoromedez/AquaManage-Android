@@ -11,4 +11,7 @@
     <color name="grey">#A0A0A0</color>
     <color name="blue">#004aad</color>
     <color name="notification_blue">#584ea8e1</color>
+    <color name="red">#e30e0e</color>
+    <color name="green">#2bea00</color>
+    <color name="yellow">#fffb00</color>
 </resources>
