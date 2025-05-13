@@ -58,7 +58,8 @@ class WaterAnalysisActivity : AppCompatActivity() {
 
     private fun setupDeviceFromIntent() {
         val deviceItem = intent.getParcelableExtra<DeviceItem>("deviceItem")
-        deviceId = deviceItem?.id ?: run {
+        deviceId = intent.getStringExtra("deviceId")
+        if (deviceId == null) {
             showToast("Invalid device")
             finish()
             return
@@ -68,7 +69,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
         registryRef = FirebaseDatabase.getInstance().getReference("registry").child(userId!!)
             .child(deviceId!!)
 
-        updateDeviceInfo(deviceItem)
+        deviceItem?.let { updateDeviceInfo(it) }
         fetchDeviceName()
     }
 
