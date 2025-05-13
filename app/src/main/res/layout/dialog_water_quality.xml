@@ -2,131 +2,133 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:layout_margin="16dp"
-    android:background="@drawable/dialog_water_analysis_background"
-    android:gravity="center_horizontal"
-    android:padding="16dp">
+    android:background="#F5F5F5"
+    android:padding="16dp"
+    android:fillViewport="true">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="250dp"
+        android:layout_height="20dp"
+        android:orientation="vertical"
         android:gravity="center"
-        android:orientation="vertical">
+        android:layout_gravity="center"
+        android:padding="16dp"
+        android:background="@drawable/dialog_water_analysis_background">
 
         <TextView
             android:id="@+id/analysisTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:text="@string/water_quality_analysis"
-            android:textAlignment="center"
+            android:text="Water Quality Analysis"
             android:textColor="@color/black"
-            android:textSize="30sp"
-            android:textStyle="bold" />
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"
+            android:textAlignment="center" />
 
         <LinearLayout
-            android:id="@+id/gridHolder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center">
 
             <LinearLayout
-                android:id="@+id/labelHolders"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:layout_marginEnd="8dp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/ph_level"
-                    android:textColor="@color/black"
-                    android:textSize="23sp" />
+                    android:orientation="vertical">
 
-                <TextView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="pH Level:"
+                        android:textSize="13sp"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TDS:"
+                        android:textSize="13sp"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Turbidity:"
+                        android:textSize="13sp"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/tds"
-                    android:textColor="@color/black"
-                    android:textSize="23sp" />
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/turbidity"
-                    android:textColor="@color/black"
-                    android:textSize="23sp" />
+                    <TextView
+                        android:id="@+id/phValueAnalysis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="13sp"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tdsValueAnalysis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="13sp"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/turbidityValueAnalysis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="13sp"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp" />
+                </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/valueHolders"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/phValueAnalysis"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/_0"
-                    android:textColor="@color/black"
-                    android:textSize="23sp" />
-
-                <TextView
-                    android:id="@+id/tdsValueAnalysis"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/_0"
-                    android:textColor="@color/black"
-                    android:textSize="23sp" />
-
-                <TextView
-                    android:id="@+id/turbidityValueAnalysis"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/_0"
-                    android:textColor="@color/black"
-                    android:textSize="23sp" />
-            </LinearLayout>
+            <ImageView
+                android:id="@+id/uses_holder"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/wateringplants"
+                android:layout_marginStart="16dp"
+                android:contentDescription="Water usage illustration" />
         </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/possible_usages"
+            android:text="Water Usages:"
+            android:textSize="13sp"
             android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/uses_holder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
-            android:contentDescription="@string/for_uses"
-            android:orientation="horizontal"
-            android:scrollbars="horizontal"
-            android:src="@drawable/wateringplants" />
+            android:layout_marginTop="16dp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/okButton"
-            android:layout_width="120dp"
-            android:layout_height="50dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/rounded_button"
-            android:text="@string/ok"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="100dp"
+            android:layout_gravity="center"
+            android:text="Done"
+            android:textSize="14sp"
             android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:background="@drawable/rounded_button" />
     </LinearLayout>
 </ScrollView>
