@@ -96,4 +96,7 @@
     <string name="scan_qr_code_of_the_device">Scan QR Code of the Device</string>
     <string name="open_qr_scanner">Open QR Scanner</string>
     <string name="plus_button">+</string>
+    <string name="notifications">Notifications</string>
+    <string name="view_details">View Details</string>
+    <string name="delete_notification">Delete Notification</string>
 </resources>

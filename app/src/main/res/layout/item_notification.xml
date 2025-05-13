@@ -14,7 +14,8 @@
         android:layout_marginHorizontal="35dp"
         android:layout_marginVertical="20dp"
         android:contentDescription="@string/notification_image"
-        android:src="@drawable/treatmentsuccess" />
+        android:src="@drawable/treatmentsuccess"
+        tools:ignore="ImageContrastCheck" />
 
     <TextView
         android:id="@+id/notificationMessage"
@@ -42,28 +43,32 @@
 
     <LinearLayout
         android:id="@+id/notificationMenu"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_height="wrap_content"
         android:layout_alignBottom="@id/notificationMessage"
-        android:orientation="horizontal"
+        android:layout_alignParentEnd="true"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="7dp">
+        android:layout_marginBottom="7dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck">
 
         <View
-            android:background="@drawable/rounded_white_view"
             android:layout_width="10dp"
             android:layout_height="10dp"
-            android:layout_marginEnd="3dp"/>
+            android:layout_marginEnd="3dp"
+            android:background="@drawable/rounded_white_view" />
 
         <View
-            android:background="@drawable/rounded_white_view"
             android:layout_width="10dp"
-            android:layout_height="10dp"/>
+            android:layout_height="10dp"
+            android:background="@drawable/rounded_white_view" />
 
     </LinearLayout>
 
     <TextView
+        android:id="@+id/notificationTimestamp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="@string/notificationTime"

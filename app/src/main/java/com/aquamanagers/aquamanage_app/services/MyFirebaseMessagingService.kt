@@ -1,6 +1,5 @@
 package com.aquamanagers.aquamanage_app.services
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -9,7 +8,6 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
-import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.aquamanagers.aquamanage_app.NotificationsActivity
 import com.aquamanagers.aquamanage_app.R
@@ -40,7 +38,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
-    fun sendNotification(title: String,  message: String, data:Map<String, String>) {
+    private fun sendNotification(title: String, message: String, data:Map<String, String>) {
         val intent = Intent(this, NotificationsActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("notificationData", data.toString())

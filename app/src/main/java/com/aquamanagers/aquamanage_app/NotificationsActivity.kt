@@ -1,5 +1,8 @@
+@file:Suppress("DEPRECATION")
+
 package com.aquamanagers.aquamanage_app
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -15,21 +18,19 @@ import com.aquamanagers.aquamanage_app.adapters.NotificationAdapter
 import com.aquamanagers.aquamanage_app.databinding.ActivityNotificationsBinding
 import com.aquamanagers.aquamanage_app.models.NotificationItem
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
-import java.util.Random
 import java.util.UUID
 
 
 class NotificationsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNotificationsBinding
     private lateinit var adapter: NotificationAdapter
-    private lateinit var database: DatabaseReference
+    private lateinit var notificationList: MutableList<NotificationItem>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +41,8 @@ class NotificationsActivity : AppCompatActivity() {
 
         binding.notificationContainer.layoutManager = LinearLayoutManager(this)
 
-        val sampleNotifications = mutableListOf<NotificationItem>()
-        adapter = NotificationAdapter(sampleNotifications)
+        notificationList = mutableListOf()
+        adapter = NotificationAdapter(notificationList)
         binding.notificationContainer.adapter = adapter
 
         listenForNotifications(userId)
@@ -53,28 +54,26 @@ class NotificationsActivity : AppCompatActivity() {
             .getReference("notifications")
             .child(userId)
 
-        notificationRef.addChildEventListener(object: ChildEventListener {
-            override fun onChildAdded(snapshot:DataSnapshot, previousChildName: String?){
-                val notification = snapshot.getValue(NotificationItem::class.java)
-                if(notification!=null){
-                    adapter.addNotification(notification)
+        notificationRef.addValueEventListener(object: ValueEventListener{
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onDataChange(snapshot: DataSnapshot) {
+                notificationList.clear()
+                for(notificationSnapshot in snapshot.children){
+                    val notification = notificationSnapshot.getValue(NotificationItem::class.java)
+                    notification?.let{
+                        if(it.colorHex.isEmpty()){
+                            it.colorHex = "#584ea8e1"
+                        }
+                        notificationList.add(it)
+                    }
                 }
+                adapter.notifyDataSetChanged()
             }
 
-            override fun onChildChanged(snapshot:DataSnapshot, previousChildName: String?){}
-            override fun onChildRemoved(snapshot:DataSnapshot){}
-            override fun onChildMoved(snapshot:DataSnapshot, previousChildName: String?){}
-            override fun onCancelled(error: DatabaseError){}
+            override fun onCancelled(error: DatabaseError) {
+                //
+            }
         })
-    }
-
-    private fun generateCustomNotificationId(): String {
-        val allowedChars = "abcdefghijklmnopqrstuvwxyz"
-        val random = Random()
-        val length = 10
-        return (1..length)
-            .map { allowedChars[random.nextInt(allowedChars.length)] }
-            .joinToString("")
     }
 
     companion object {
