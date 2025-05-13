@@ -2,7 +2,9 @@ package com.aquamanagers.aquamanage_app.models
 
 data class HistoryItem(
     val id: String,
-    val details: String,
+    val phValue: Double,
+    val tdsValue: Double,
+    val turbidityValue: Double,
     val timestamp: Long,
-    val date: Int
+    val status: String
 )

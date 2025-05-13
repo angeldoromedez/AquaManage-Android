@@ -28,6 +28,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
     private lateinit var binding: ActivityWaterAnalysisBinding
     private lateinit var deviceRef: DatabaseReference
     private lateinit var registryRef: DatabaseReference
+    private lateinit var historyRef: DatabaseReference
     private lateinit var progressBar: ProgressBar
     private var userId: String? = null
     private var deviceId: String? = null
@@ -68,9 +69,15 @@ class WaterAnalysisActivity : AppCompatActivity() {
         deviceRef = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId!!)
         registryRef = FirebaseDatabase.getInstance().getReference("registry").child(userId!!)
             .child(deviceId!!)
+        historyRef = FirebaseDatabase.getInstance().getReference("history").child(userId!!).child(deviceId!!)
 
         deviceItem?.let { updateDeviceInfo(it) }
+        setupHistoryData()
         fetchDeviceName()
+    }
+
+    private fun setupHistoryData() {
+
     }
 
     private fun setupButtons() {

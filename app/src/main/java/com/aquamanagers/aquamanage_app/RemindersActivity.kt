@@ -36,7 +36,6 @@ class RemindersActivity : AppCompatActivity() {
             if (currentItem < layouts.size - 1) {
                 viewPager.currentItem = currentItem + 1
             } else {
-                // Last screen: redirect to login
                 startActivity(Intent(this, LoginActivity::class.java))
                 finish()
             }
@@ -45,9 +44,9 @@ class RemindersActivity : AppCompatActivity() {
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 if(position == layouts.lastIndex)
-                    btnNext.setImageResource(R.drawable.ic_arrow_right)
-                else
                     btnNext.setImageResource(R.drawable.ic_done_symbol)
+                else
+                    btnNext.setImageResource(R.drawable.ic_arrow_right)
             }
         })
     }
