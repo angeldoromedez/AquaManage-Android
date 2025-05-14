@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.aquamanagers.aquamanage_app.R
 import com.aquamanagers.aquamanage_app.models.DeviceItem
@@ -23,6 +24,7 @@ class DeviceCardAdapter(
         val tdsValue: TextView = itemView.findViewById(R.id.tdsValueHolder)
         val turbidityValue: TextView = itemView.findViewById(R.id.turbidityValueHolder)
         val deviceName: TextView = itemView.findViewById(R.id.deviceTitleHolder)
+        val progressCircular: ContentLoadingProgressBar = itemView.findViewById(R.id.progress_circular)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -36,6 +38,7 @@ class DeviceCardAdapter(
         holder.tdsValue.text = item.tdsValue
         holder.turbidityValue.text = item.turbidityValue
         holder.deviceName.text = item.deviceName
+        holder.progressCircular.progress = item.progress
 
         try{
             holder.itemView.setBackgroundColor(android.graphics.Color.parseColor(item.colorHex))

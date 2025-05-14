@@ -129,6 +129,34 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
             }
     }
 
+    private fun monitorDeviceProgress(userId: String, deviceId:String){
+        val deviceRef = FirebaseDatabase.getInstance()
+            .getReference("registry")
+            .child(userId)
+            .child(deviceId)
+            .child("progress")
+
+        deviceRef.addValueEventListener(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot){
+                val progress = snapshot.getValue(Int::class.java)?: 0
+                updateDeviceProgress(deviceId, progress)
+            }
+            override fun onCancelled(error: DatabaseError) {
+                //
+            }
+        })
+    }
+
+    private fun updateDeviceProgress(deviceId: String, progress: Int) {
+        for(i in items.indices){
+            if(items[i].id == deviceId){
+                items[i].progress = progress
+                adapter.notifyItemChanged(i)
+                break
+            }
+        }
+    }
+
     private fun setupAvatarListener(){
         val userId = FirebaseAuth.getInstance().currentUser?.uid?:return
 
@@ -222,9 +250,11 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                                     tds,
                                     turbidity,
                                     deviceName,
-                                    colorHex
+                                    colorHex,
+                                    0
                                 )
                             )
+                            monitorDeviceProgress(userId, deviceId)
                             binding.newDevice.visibility = View.VISIBLE
                             future.complete(Unit)
                         }
@@ -521,7 +551,8 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                     tdsValue.toString(),
                     turbidityValue.toString(),
                     deviceName,
-                    deviceColor
+                    deviceColor,
+                    0
                 )
                 adapter.addItem(newItem)
                 Toast.makeText(this, "Device added successfully", Toast.LENGTH_SHORT).show()

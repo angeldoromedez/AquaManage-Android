@@ -3,11 +3,12 @@
 package com.aquamanagers.aquamanage_app
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -35,6 +36,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
     private lateinit var registryRef: DatabaseReference
     private lateinit var historyRef: DatabaseReference
     private lateinit var progressBar: ProgressBar
+    private lateinit var progressText: TextView
     private var userId: String? = null
     private var deviceId: String? = null
 
@@ -55,7 +57,9 @@ class WaterAnalysisActivity : AppCompatActivity() {
         setupButtons()
 
         progressBar = binding.progressBar
+        progressText = binding.progressText
         progressBar.visibility = View.GONE
+        progressText.visibility = View.GONE
 
         binding.backButton.setOnClickListener{
             finish()
@@ -196,14 +200,52 @@ class WaterAnalysisActivity : AppCompatActivity() {
     private fun startWaterAnalysis() {
         isChecking = true
         progressBar.visibility = View.VISIBLE
+        progressText.visibility = View.VISIBLE
         deviceRef.child("controls").setValue(1).addOnSuccessListener {
             showToast("Analysis started")
             setupAnalysisMonitoring()
             setupHistoryData(userId!!, deviceId!!, "Treatment started")
+            registryRef.child("progress").setValue(0)
+            startProgressTimer()
         }.addOnFailureListener {
             showToast("Failed to start analysis: ${it.message}")
             progressBar.visibility = View.GONE
+            progressText.visibility = View.GONE
         }
+    }
+
+    private fun startProgressTimer() {
+        val totalDuration = 20 * 60 * 1000L
+        object: CountDownTimer(totalDuration, 1000){
+            @SuppressLint("SetTextI18n")
+            override fun onTick(millisUntilFinished: Long){
+                val progress = ((totalDuration - millisUntilFinished)/1000).toInt()
+                val progressPercent = (progress/12)
+
+                progressBar.progress = progressPercent
+                progressText.text = "$progressPercent%"
+
+                FirebaseDatabase.getInstance()
+                    .getReference("registry")
+                    .child(FirebaseAuth.getInstance().currentUser?.uid?:return)
+                    .child(deviceId!!)
+                    .child("progress")
+                    .setValue(progressPercent)
+            }
+
+            @SuppressLint("SetTextI18n")
+            override fun onFinish() {
+                progressBar.progress = 100
+                progressText.text = "100%"
+
+                FirebaseDatabase.getInstance()
+                    .getReference("registry")
+                    .child(FirebaseAuth.getInstance().currentUser?.uid?:return)
+                    .child(deviceId!!)
+                    .child("progress")
+                    .setValue(100)
+            }
+        }.start()
     }
 
     private fun setupAnalysisMonitoring() {
@@ -236,10 +278,10 @@ class WaterAnalysisActivity : AppCompatActivity() {
     private fun completeAnalysisSuccessfully() {
         isChecking = false
         progressBar.visibility = View.GONE
+        progressText.visibility = View.GONE
         deviceRef.child("controls").setValue(0).addOnSuccessListener {
             NotificationsActivity.sendCompleteNotification(this, userId!!, deviceId!!)
-            showWaterAnalysisDialog()
-            showToast("Analysis completed successfully")
+            showWaterAnalysisDialog(R.drawable.treatmentsucess, "TREATMENT SUCCESS")
             setupHistoryData(userId!!, deviceId!!, "Treatment completed")
         }
     }
@@ -247,9 +289,10 @@ class WaterAnalysisActivity : AppCompatActivity() {
     private fun stopWaterAnalysis() {
         isChecking = false
         progressBar.visibility = View.GONE
+        progressText.visibility = View.GONE
         deviceRef.child("controls").setValue(0).addOnSuccessListener {
             NotificationsActivity.sendStopNotification(this, userId!!, deviceId!!)
-            showToast("Analysis stopped")
+            showWaterAnalysisDialog(R.drawable.treatmentstop, "TREATMENT STOPPED")
             setupHistoryData(userId!!, deviceId!!, "Treatment stopped")
         }
     }
@@ -269,13 +312,18 @@ class WaterAnalysisActivity : AppCompatActivity() {
     }
 
     @SuppressLint("InflateParams", "SetTextI18n", "DefaultLocale")
-    private fun showWaterAnalysisDialog() {
+    private fun showWaterAnalysisDialog(doneTreatment: Int, analysis: String) {
         val dialog = AlertDialog.Builder(this).create()
         val inflater = LayoutInflater.from(this)
         val dialogView = inflater.inflate(R.layout.dialog_treatment_complete, null)
 
         val viewFlipper: ViewFlipper = dialogView.findViewById(R.id.dialogViewFlipper)
         val btnShowAnalysis: Button = dialogView.findViewById(R.id.btnShowAnalysis)
+        val treatmentDoneImage: ImageView = dialogView.findViewById(R.id.treatmentSuccessImage)
+        val analysisText: TextView = dialogView.findViewById(R.id.treatmentSuccessText)
+
+        treatmentDoneImage.setImageResource(doneTreatment)
+        analysisText.text = analysis
 
         btnShowAnalysis.setOnClickListener {
             viewFlipper.showNext()

@@ -196,14 +196,24 @@
         android:id="@+id/progressBar"
         style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
         android:layout_width="250dp"
-        android:layout_height="50dp"
-        android:progress="64"
+        android:layout_height="25dp"
+        android:progress="65"
         android:max="100"
         android:progressDrawable="@drawable/custom_progress"
         android:layout_below="@id/treatmentTitle"
         android:layout_centerHorizontal="true"
-        android:indeterminate="true"
         android:layout_marginTop="40dp" />
+
+    <TextView
+        android:id="@+id/progressText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/_65"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_toEndOf="@id/progressBar"
+        android:layout_alignBottom="@id/progressBar"
+        android:layout_marginStart="10dp"/>
 
     <LinearLayout
         android:id="@+id/buttonContainer"
