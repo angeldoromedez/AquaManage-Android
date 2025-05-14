@@ -246,18 +246,22 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun generateIncrementingUserId(callback: (String) -> Unit) {
-        val userRef = FirebaseDatabase.getInstance().getReference("users")
+        val userRef = FirebaseDatabase.getInstance().getReference("Users")
 
-        userRef.orderByChild("customUID").limitToLast(1).get().addOnSuccessListener { snapshot ->
-            val lastId = snapshot.children.firstOrNull()?.child("customUID")?.value.toString()
-            val nextId = if (lastId.isNotEmpty()) {
-                (lastId.toInt()+1).toString().padStart(8,'0')
-            } else {
-                "00000001"
+        userRef.get().addOnSuccessListener { snapshot->
+            var maxId = 0
+
+            for(child in snapshot.children){
+                val customUID = child.child("customUID").getValue(String::class.java)
+                val numericId = customUID?.toIntOrNull() ?: 0
+                if(numericId>maxId){
+                    maxId = numericId
+                }
             }
+            val nextId = (maxId+1).toString().padStart(8,'0')
             callback(nextId)
-        }.addOnFailureListener {
-            callback("000001")
+        }.addOnFailureListener{
+            callback("00000001")
         }
     }
 

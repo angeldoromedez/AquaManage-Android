@@ -103,6 +103,7 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
         }
     }
 
+    @SuppressLint("DiscouragedApi")
     private fun loadAvatar(){
         val prefs = getSharedPreferences("AppPreferences", MODE_PRIVATE)
         val savedAvatarResId = prefs.getInt("selectedAvatar", -1)
@@ -113,7 +114,7 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
 
         val userId = FirebaseAuth.getInstance().currentUser?.uid?:return
 
-        FirebaseDatabase.getInstance().getReference("users")
+        FirebaseDatabase.getInstance().getReference("Users")
             .child(userId)
             .child("avatar")
             .get()
@@ -131,10 +132,11 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
     private fun setupAvatarListener(){
         val userId = FirebaseAuth.getInstance().currentUser?.uid?:return
 
-        FirebaseDatabase.getInstance().getReference("users")
+        FirebaseDatabase.getInstance().getReference("Users")
             .child(userId)
             .child("avatar")
             .addValueEventListener(object: ValueEventListener{
+                @SuppressLint("DiscouragedApi")
                 override fun onDataChange(snapshot: DataSnapshot){
                     val avatarName = snapshot.getValue(String::class.java) ?: return
                     val resourceId = resources.getIdentifier(avatarName, "drawable", packageName)
