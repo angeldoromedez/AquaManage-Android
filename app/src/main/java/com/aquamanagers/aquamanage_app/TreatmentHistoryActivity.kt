@@ -68,7 +68,7 @@ class TreatmentHistoryActivity : AppCompatActivity() {
             for (historySnapshot in snapshot.children) {
                 val history = historySnapshot.getValue(HistoryItem::class.java)
                 if (history != null) {
-                    val timeInMillis = history.timestamp.toFloat()
+                    val timeInMillis = history.timeStamp.toFloat()
                     val phValue = history.phValue.toFloat()
                     val tdsValue = history.tdsValue.toFloat()
                     val turbidityValue = history.turbidityValue.toFloat()

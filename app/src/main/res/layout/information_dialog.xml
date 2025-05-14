@@ -79,7 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Total Dissolved Solids (TDS): <1500 mg/L"
+            android:text="Total Dissolved Solids (TDS): &lt;1500 mg/L"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/black"
