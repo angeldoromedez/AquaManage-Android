@@ -69,7 +69,7 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val prefs = getSharedPreferences("AppPreferences", MODE_PRIVATE)
         val savedAvatarResId = prefs.getInt("selectedAvatar", -1)
         if (savedAvatarResId != -1)
             binding.profileIcon.setImageResource(savedAvatarResId)
