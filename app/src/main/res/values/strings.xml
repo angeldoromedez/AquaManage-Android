@@ -113,4 +113,7 @@
     <string name="ph_recommended_value">pH Level: 7.00 – 10.00</string>
     <string name="water_quality_guidelines">Water Quality Guidelines</string>
     <string name="_65">65%</string>
+    <string name="useful_water_uses">You have successfully treated your water! While this water is not safe for drinking, you can still use it for tasks like watering plants, flushing toilets, cleaning, or other non-potable purposes. Make the most of your treated water while conserving fresh resources.</string>
+    <string name="harmful_water">Your water did not meet the quality standards. Please restart the treatment process to ensure safe and clean water. Make sure your device is functioning properly.</string>
+    <string name="water_usage_illustration">Water usage illustration</string>
 </resources>

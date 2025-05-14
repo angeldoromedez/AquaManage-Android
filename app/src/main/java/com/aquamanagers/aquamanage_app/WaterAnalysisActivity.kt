@@ -39,6 +39,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
     private lateinit var progressText: TextView
     private var userId: String? = null
     private var deviceId: String? = null
+    private var progressTimer: CountDownTimer? = null
 
     private val realtimeListeners = mutableListOf<ValueEventListener>()
     private val decimalFormat = DecimalFormat("#.##")
@@ -216,28 +217,24 @@ class WaterAnalysisActivity : AppCompatActivity() {
 
     private fun startProgressTimer() {
         val totalDuration = 20 * 60 * 1000L
-        object: CountDownTimer(totalDuration, 1000){
+        progressBar.max = 100
+        progressTimer = object: CountDownTimer(totalDuration, 1000){
             @SuppressLint("SetTextI18n")
             override fun onTick(millisUntilFinished: Long){
-                val progress = ((totalDuration - millisUntilFinished)/1000).toInt()
-                val progressPercent = (progress/12)
-
-                progressBar.progress = progressPercent
-                progressText.text = "$progressPercent%"
+                val progress = ((totalDuration - millisUntilFinished) * 100/totalDuration).toInt()
+                updateProgress(progress)
 
                 FirebaseDatabase.getInstance()
                     .getReference("registry")
                     .child(FirebaseAuth.getInstance().currentUser?.uid?:return)
                     .child(deviceId!!)
                     .child("progress")
-                    .setValue(progressPercent)
+                    .setValue(progress)
             }
 
             @SuppressLint("SetTextI18n")
             override fun onFinish() {
-                progressBar.progress = 100
-                progressText.text = "100%"
-
+                updateProgress(100)
                 FirebaseDatabase.getInstance()
                     .getReference("registry")
                     .child(FirebaseAuth.getInstance().currentUser?.uid?:return)
@@ -245,7 +242,48 @@ class WaterAnalysisActivity : AppCompatActivity() {
                     .child("progress")
                     .setValue(100)
             }
-        }.start()
+        }
+        progressTimer?.start()
+    }
+
+    private fun stopProgressTimer(){
+        progressTimer?.cancel()
+        progressTimer = null
+
+        FirebaseDatabase.getInstance()
+            .getReference("registry")
+            .child(FirebaseAuth.getInstance().currentUser?.uid?:return)
+            .child(deviceId!!)
+            .child("progress")
+            .setValue(0)
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateProgress(progress: Int) {
+        progressBar.setProgress(progress, true)
+        progressText.text = "$progress%"
+
+        if(progress>=100){
+            progressBar.visibility = View.GONE
+            progressText.visibility = View.GONE
+        } else {
+            progressBar.visibility = View.VISIBLE
+            progressText.visibility = View.VISIBLE
+        }
+
+        FirebaseDatabase.getInstance()
+            .getReference("registry")
+            .child(FirebaseAuth.getInstance().currentUser?.uid ?: return)
+            .child(deviceId!!)
+            .child("progress")
+            .get().addOnSuccessListener { snapshot ->
+                val progressValue = snapshot.getValue(Int::class.java) ?: 0
+                updateRecyclerViewProgress(progressValue)
+            }
+    }
+
+    private fun updateRecyclerViewProgress(progress: Int) {
+        registryRef.child("progress").setValue(progress)
     }
 
     private fun setupAnalysisMonitoring() {
@@ -284,6 +322,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
             showWaterAnalysisDialog(R.drawable.treatmentsucess, "TREATMENT SUCCESS")
             setupHistoryData(userId!!, deviceId!!, "Treatment completed")
         }
+        stopProgressTimer()
     }
 
     private fun stopWaterAnalysis() {
@@ -295,6 +334,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
             showWaterAnalysisDialog(R.drawable.treatmentstop, "TREATMENT STOPPED")
             setupHistoryData(userId!!, deviceId!!, "Treatment stopped")
         }
+        stopProgressTimer()
     }
 
     private fun fetchDeviceName() {
@@ -338,7 +378,18 @@ class WaterAnalysisActivity : AppCompatActivity() {
             val phTextView: TextView = dialogView.findViewById(R.id.phValueAnalysis)
             val tdsTextView: TextView = dialogView.findViewById(R.id.tdsValueAnalysis)
             val turbidityTextView: TextView = dialogView.findViewById(R.id.turbidityValueAnalysis)
+            val usagesTextView: TextView = dialogView.findViewById(R.id.usagesText)
+            val usages: String
 
+            if(ph in 7.0..10.0 && turbidity<5 && tds<1500) {
+                usages = getString(R.string.useful_water_uses)
+                showRandomizedImage(dialogView)
+            } else{
+                usages = getString(R.string.harmful_water)
+                showWarningImage(dialogView)
+            }
+
+            usagesTextView.text = usages
             phTextView.text = String.format("%.2f", ph)
             tdsTextView.text = String.format("%.2f", tds)
             turbidityTextView.text = String.format("%.2f", turbidity)
@@ -350,6 +401,25 @@ class WaterAnalysisActivity : AppCompatActivity() {
         dialog.setView(dialogView)
         dialog.setCancelable(true)
         dialog.show()
+    }
+
+    private fun showRandomizedImage(dialogView: View){
+        val imageView:ImageView = dialogView.findViewById(R.id.uses_holder)
+        val images = arrayOf(
+            R.drawable.flushing,
+            R.drawable.laundry,
+            R.drawable.carwash,
+            R.drawable.mopping,
+            R.drawable.watering
+        )
+
+        val randomImage = images.random()
+        imageView.setImageResource(randomImage)
+    }
+
+    private fun showWarningImage(dialogView: View){
+        val imageView:ImageView = dialogView.findViewById(R.id.uses_holder)
+        imageView.setImageResource(R.drawable.maintenancealert)
     }
 
     @SuppressLint("DefaultLocale")
