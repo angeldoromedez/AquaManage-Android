@@ -49,8 +49,8 @@
         android:layout_height="24dp"
         android:src="@drawable/info"
         android:layout_alignBottom="@id/waterAnalysisTitle"
-        android:layout_toEndOf="@id/waterAnalysisTitle"
-        android:layout_marginStart="220dp" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp" />
 
     <LinearLayout
         android:id="@+id/waterMetrics"
