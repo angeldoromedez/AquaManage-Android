@@ -9,6 +9,7 @@ data class DeviceItem(val id: String,
                       val turbidityValue: String,
                       var deviceName: String,
                       var colorHex: String,
+                      var progress: Int
 ):Parcelable {
     constructor(parcel: Parcel): this(
         parcel.readString() ?: "ESP32",
@@ -16,7 +17,8 @@ data class DeviceItem(val id: String,
         parcel.readString()?:"0",
         parcel.readString()?:"0",
         parcel.readString()?:"Device 1",
-        parcel.readString()?:"#FFFFFFF"
+        parcel.readString()?:"#FFFFFFF",
+        parcel.readInt()
     )
 
     override fun writeToParcel(parcel:Parcel, flags:Int){
@@ -26,6 +28,7 @@ data class DeviceItem(val id: String,
         parcel.writeString(turbidityValue)
         parcel.writeString(deviceName)
         parcel.writeString(colorHex)
+        parcel.writeInt(progress)
     }
 
     override fun describeContents(): Int = 0
