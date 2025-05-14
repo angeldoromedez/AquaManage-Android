@@ -16,7 +16,7 @@
         android:layout_marginHorizontal="35dp"
         android:layout_marginVertical="20dp"
         android:contentDescription="@string/notification_image"
-        android:src="@drawable/treatmentsuccess"
+        android:src="@drawable/treatmentsucess"
         tools:ignore="ImageContrastCheck" />
 
     <TextView
