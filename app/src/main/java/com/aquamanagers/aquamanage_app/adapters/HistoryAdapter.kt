@@ -17,6 +17,8 @@ class HistoryAdapter(
 
     inner class HistoryViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val deviceName: TextView = itemView.findViewById(R.id.deviceTitleHolder)
+        val lastTreatment: TextView = itemView.findViewById(R.id.lastTreatment)
+        val timeStamp: TextView = itemView.findViewById(R.id.deviceHistoryTimestamp)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
@@ -31,7 +33,7 @@ class HistoryAdapter(
         position: Int
     ) {
         val (deviceId, deviceName) = deviceList[position]
-        holder.deviceName.text = "Device: $deviceName"
+        holder.deviceName.text = deviceName
         holder.itemView.setOnClickListener{
             onDeviceClick(deviceId)
         }
