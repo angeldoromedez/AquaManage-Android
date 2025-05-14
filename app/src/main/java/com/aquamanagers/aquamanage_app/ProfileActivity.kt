@@ -1,5 +1,6 @@
 package com.aquamanagers.aquamanage_app
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -95,6 +96,7 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("UseKtx")
     private fun showAvatarSelectionDialog() {
         val avatars = listOf(
             R.drawable.ava_a,
