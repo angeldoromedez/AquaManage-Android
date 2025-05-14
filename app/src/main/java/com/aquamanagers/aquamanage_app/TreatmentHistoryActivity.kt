@@ -107,7 +107,6 @@ class TreatmentHistoryActivity : AppCompatActivity() {
                 lineWidth = 2f
                 setDrawCircles(true)
                 setCircleColor(color)
-                valueTextSize = 10f
             }
 
             val tdsDataSet = LineDataSet(tdsEntries, "TDS Level").apply {
@@ -115,7 +114,6 @@ class TreatmentHistoryActivity : AppCompatActivity() {
                 lineWidth = 2f
                 setDrawCircles(true)
                 setCircleColor(color)
-                valueTextSize = 10f
             }
 
             val turbidityDataSet = LineDataSet(turbidityEntries, "Turbidity Level").apply {
@@ -123,7 +121,6 @@ class TreatmentHistoryActivity : AppCompatActivity() {
                 lineWidth = 2f
                 setDrawCircles(true)
                 setCircleColor(color)
-                valueTextSize = 10f
             }
 
             data = LineData(phDataSet, tdsDataSet, turbidityDataSet)
