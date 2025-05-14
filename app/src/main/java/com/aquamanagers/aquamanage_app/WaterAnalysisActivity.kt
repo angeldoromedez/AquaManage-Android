@@ -93,7 +93,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val formattedDate = dateFormat.format(currentDate)
 
-            deviceRef = FirebaseDatabase.getInstance().getReference("esp32")
+            deviceRef = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId)
             deviceRef.get().addOnSuccessListener { snapshot ->
                 val phValue = snapshot.child("ph").getValue(Double::class.java) ?: 0.0
                 val tdsValue = snapshot.child("tds").getValue(Double::class.java) ?: 0.0
@@ -120,15 +120,10 @@ class WaterAnalysisActivity : AppCompatActivity() {
     }
 
     private fun generateIncrementingId(callback: (String) -> Unit) {
-        historyRef = FirebaseDatabase.getInstance().getReference("history")
-
+        historyRef = FirebaseDatabase.getInstance().getReference("history").child(userId!!).child(deviceId!!)
         historyRef.limitToLast(1).get().addOnSuccessListener { snapshot ->
-            val lastId = snapshot.children.firstOrNull()?.value.toString()
-            val nextId = if (lastId.isNotEmpty()) {
-                (lastId.toInt() + 1).toString().padStart(8, '0')
-            } else {
-                "00000001"
-            }
+            val lastId = snapshot.children.lastOrNull()?.key?.toIntOrNull() ?: 0
+            val nextId = (lastId+ 1).toString().padStart(8, '0')
             callback(nextId)
         }.addOnFailureListener {
             callback("00000001")
@@ -192,6 +187,10 @@ class WaterAnalysisActivity : AppCompatActivity() {
         }
         deviceRef.child("tds").get().addOnSuccessListener {
             initialTdsValue = it.getValue(Double::class.java) ?: 0.0
+        }
+
+        deviceRef.child("turbidity").get().addOnSuccessListener {
+            initialTurbidityValue = it.getValue(Double::class.java) ?: 0.0
         }
 
         deviceRef.addValueEventListener(object : ValueEventListener {
