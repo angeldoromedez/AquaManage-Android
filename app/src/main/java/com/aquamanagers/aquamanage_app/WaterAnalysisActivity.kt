@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.aquamanagers.aquamanage_app.databinding.ActivityWaterAnalysisBinding
 import com.aquamanagers.aquamanage_app.models.DeviceItem
+import com.aquamanagers.aquamanage_app.models.HistoryItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -22,6 +23,9 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class WaterAnalysisActivity : AppCompatActivity() {
 
@@ -33,6 +37,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
     private var userId: String? = null
     private var deviceId: String? = null
 
+    private val realtimeListeners = mutableListOf<ValueEventListener>()
     private val decimalFormat = DecimalFormat("#.##")
     private var initialPhValue = 0.0
     private var initialTdsValue = 0.0
@@ -47,7 +52,6 @@ class WaterAnalysisActivity : AppCompatActivity() {
         initializeFirebase()
         setupDeviceFromIntent()
         setupButtons()
-        setupRealtimeUpdates()
 
         progressBar = binding.progressBar
         progressBar.visibility = View.GONE
@@ -59,25 +63,76 @@ class WaterAnalysisActivity : AppCompatActivity() {
 
     private fun setupDeviceFromIntent() {
         val deviceItem = intent.getParcelableExtra<DeviceItem>("deviceItem")
-        deviceId = intent.getStringExtra("deviceId")
+        if (deviceItem != null) {
+            deviceId = deviceItem.id
+        }
+
         if (deviceId == null) {
             showToast("Invalid device")
             finish()
             return
+        } else {
+
+            deviceRef = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId!!)
+            registryRef = FirebaseDatabase.getInstance().getReference("registry").child(userId!!)
+                .child(deviceId!!)
+            historyRef = FirebaseDatabase.getInstance().getReference("history").child(userId!!)
+                .child(deviceId!!)
+
+            deviceItem?.let { updateDeviceInfo(it) }
+            fetchDeviceName()
+            setupRealtimeUpdates()
         }
-
-        deviceRef = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId!!)
-        registryRef = FirebaseDatabase.getInstance().getReference("registry").child(userId!!)
-            .child(deviceId!!)
-        historyRef = FirebaseDatabase.getInstance().getReference("history").child(userId!!).child(deviceId!!)
-
-        deviceItem?.let { updateDeviceInfo(it) }
-        setupHistoryData()
-        fetchDeviceName()
     }
 
-    private fun setupHistoryData() {
+    private fun setupHistoryData(userId: String, deviceId: String, status: String) {
 
+        generateIncrementingId { customHistoryId ->
+            val timeStart = System.currentTimeMillis()
+            val currentDate = Date()
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val formattedDate = dateFormat.format(currentDate)
+
+            deviceRef = FirebaseDatabase.getInstance().getReference("esp32")
+            deviceRef.get().addOnSuccessListener { snapshot ->
+                val phValue = snapshot.child("ph").getValue(Double::class.java) ?: 0.0
+                val tdsValue = snapshot.child("tds").getValue(Double::class.java) ?: 0.0
+                val turbidityValue = snapshot.child("turbidity").getValue(Double::class.java) ?: 0.0
+
+                val history = HistoryItem(
+                    phValue = phValue,
+                    tdsValue = tdsValue,
+                    turbidityValue = turbidityValue,
+                    timeStamp = timeStart,
+                    date = formattedDate,
+                    status = status
+                )
+
+                historyRef = FirebaseDatabase.getInstance().getReference("history")
+                    .child(userId).child(deviceId).child(customHistoryId)
+                historyRef.setValue(history).addOnSuccessListener {
+                    //
+                }.addOnFailureListener{ e->
+                    Toast.makeText(this, "Failed to add history data: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun generateIncrementingId(callback: (String) -> Unit) {
+        historyRef = FirebaseDatabase.getInstance().getReference("history")
+
+        historyRef.limitToLast(1).get().addOnSuccessListener { snapshot ->
+            val lastId = snapshot.children.firstOrNull()?.value.toString()
+            val nextId = if (lastId.isNotEmpty()) {
+                (lastId.toInt() + 1).toString().padStart(8, '0')
+            } else {
+                "00000001"
+            }
+            callback(nextId)
+        }.addOnFailureListener {
+            callback("00000001")
+        }
     }
 
     private fun setupButtons() {
@@ -88,10 +143,20 @@ class WaterAnalysisActivity : AppCompatActivity() {
 
     private fun setupRealtimeUpdates() {
         clearRealtimeListeners()
-        deviceRef.child("ph").addValueEventListener(createRealtimeListener(binding.phValue))
-        deviceRef.child("tds").addValueEventListener(createRealtimeListener(binding.tdsValue))
-        deviceRef.child("turbidity")
-            .addValueEventListener(createRealtimeListener(binding.turbidityValue))
+
+        val phListener = createRealtimeListener(binding.phValue)
+        val tdsListener = createRealtimeListener(binding.tdsValue)
+        val turbidityListener = createRealtimeListener(binding.turbidityValue)
+
+        deviceRef.child("ph").addValueEventListener(phListener)
+        deviceRef.child("tds").addValueEventListener(tdsListener)
+        deviceRef.child("turbidity").addValueEventListener(turbidityListener)
+
+        realtimeListeners.apply {
+            add(phListener)
+            add(tdsListener)
+            add(turbidityListener)
+        }
     }
 
     private fun createRealtimeListener(textView: TextView): ValueEventListener {
@@ -114,8 +179,11 @@ class WaterAnalysisActivity : AppCompatActivity() {
         deviceRef.child("controls").setValue(1).addOnSuccessListener {
             showToast("Analysis started")
             setupAnalysisMonitoring()
-        }.addOnFailureListener { showToast("Failed to start analysis: ${it.message}")
-        progressBar.visibility = View.GONE}
+            setupHistoryData(userId!!, deviceId!!, "Treatment started")
+        }.addOnFailureListener {
+            showToast("Failed to start analysis: ${it.message}")
+            progressBar.visibility = View.GONE
+        }
     }
 
     private fun setupAnalysisMonitoring() {
@@ -144,10 +212,12 @@ class WaterAnalysisActivity : AppCompatActivity() {
     private fun completeAnalysisSuccessfully() {
         isChecking = false
         progressBar.visibility = View.GONE
-        deviceRef.child("controls").setValue(0)
-        NotificationsActivity.sendCompleteNotification(this, userId!!, deviceId!!)
-        showWaterAnalysisDialog()
-        showToast("Analysis completed successfully")
+        deviceRef.child("controls").setValue(0).addOnSuccessListener {
+            NotificationsActivity.sendCompleteNotification(this, userId!!, deviceId!!)
+            showWaterAnalysisDialog()
+            showToast("Analysis completed successfully")
+            setupHistoryData(userId!!, deviceId!!, "Treatment completed")
+        }
     }
 
     private fun stopWaterAnalysis() {
@@ -156,6 +226,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
         deviceRef.child("controls").setValue(0).addOnSuccessListener {
             NotificationsActivity.sendStopNotification(this, userId!!, deviceId!!)
             showToast("Analysis stopped")
+            setupHistoryData(userId!!, deviceId!!, "Treatment stopped")
         }
     }
 
@@ -179,28 +250,29 @@ class WaterAnalysisActivity : AppCompatActivity() {
         val inflater = LayoutInflater.from(this)
         val dialogView = inflater.inflate(R.layout.dialog_treatment_complete, null)
 
-        val viewFlipper:ViewFlipper = dialogView.findViewById(R.id.dialogViewFlipper)
+        val viewFlipper: ViewFlipper = dialogView.findViewById(R.id.dialogViewFlipper)
         val btnShowAnalysis: Button = dialogView.findViewById(R.id.btnShowAnalysis)
 
-        btnShowAnalysis.setOnClickListener{
+        btnShowAnalysis.setOnClickListener {
             viewFlipper.showNext()
         }
 
         deviceRef = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId!!)
-        deviceRef.get().addOnSuccessListener{ snapshot ->
+        deviceRef.get().addOnSuccessListener { snapshot ->
             val ph = snapshot.child("ph").getValue(Double::class.java) ?: 0.0
             val tds = snapshot.child("tds").getValue(Double::class.java) ?: 0.0
             val turbidity = snapshot.child("turbidity").getValue(Double::class.java) ?: 0.0
 
-            val phTextView:TextView = dialogView.findViewById(R.id.phValueAnalysis)
-            val tdsTextView:TextView = dialogView.findViewById(R.id.tdsValueAnalysis)
-            val turbidityTextView:TextView = dialogView.findViewById(R.id.turbidityValueAnalysis)
+            val phTextView: TextView = dialogView.findViewById(R.id.phValueAnalysis)
+            val tdsTextView: TextView = dialogView.findViewById(R.id.tdsValueAnalysis)
+            val turbidityTextView: TextView = dialogView.findViewById(R.id.turbidityValueAnalysis)
 
             phTextView.text = String.format("%.2f", ph)
             tdsTextView.text = String.format("%.2f", tds)
             turbidityTextView.text = String.format("%.2f", turbidity)
-        }.addOnFailureListener{e ->
-            Toast.makeText(this, "Failed to get water quality: ${e.message}", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, "Failed to get water quality: ${e.message}", Toast.LENGTH_SHORT)
+                .show()
         }
 
         dialog.setView(dialogView)
@@ -211,7 +283,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
     @SuppressLint("DefaultLocale")
     private fun showWaterQualityDialog() {
         deviceRef = FirebaseDatabase.getInstance().getReference("esp32").child(deviceId!!)
-        deviceRef.get().addOnSuccessListener{ snapshot ->
+        deviceRef.get().addOnSuccessListener { snapshot ->
             val ph = snapshot.child("ph").getValue(Double::class.java) ?: 0.0
             val tds = snapshot.child("tds").getValue(Double::class.java) ?: 0.0
             val turbidity = snapshot.child("turbidity").getValue(Double::class.java) ?: 0.0
@@ -220,16 +292,16 @@ class WaterAnalysisActivity : AppCompatActivity() {
             val inflater = LayoutInflater.from(this)
             val dialogView = inflater.inflate(R.layout.dialog_water_quality, null)
 
-            val phTextView:TextView = dialogView.findViewById(R.id.phValueAnalysis)
-            val tdsTextView:TextView = dialogView.findViewById(R.id.tdsValueAnalysis)
-            val turbidityTextView:TextView = dialogView.findViewById(R.id.turbidityValueAnalysis)
+            val phTextView: TextView = dialogView.findViewById(R.id.phValueAnalysis)
+            val tdsTextView: TextView = dialogView.findViewById(R.id.tdsValueAnalysis)
+            val turbidityTextView: TextView = dialogView.findViewById(R.id.turbidityValueAnalysis)
             val okButton: Button = dialogView.findViewById(R.id.okButton)
 
             dialog.setView(dialogView)
             dialog.setCancelable(true)
             dialog.show()
 
-            okButton.setOnClickListener{
+            okButton.setOnClickListener {
                 dialog.dismiss()
             }
 
@@ -238,16 +310,19 @@ class WaterAnalysisActivity : AppCompatActivity() {
             turbidityTextView.text = String.format("%.2f", turbidity)
 
 
-        }.addOnFailureListener{e ->
-            Toast.makeText(this, "Failed to get water quality: ${e.message}", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, "Failed to get water quality: ${e.message}", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
     private fun clearRealtimeListeners() {
-        deviceRef.removeEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {}
-            override fun onCancelled(error: DatabaseError) {}
-        })
+        if (::deviceRef.isInitialized) {
+            for (listener in realtimeListeners) {
+                deviceRef.removeEventListener(listener)
+            }
+            realtimeListeners.clear()
+        }
     }
 
     private fun showToast(message: String) {
