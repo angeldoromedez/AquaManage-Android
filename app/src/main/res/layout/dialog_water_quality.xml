@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="#F5F5F5"
-    android:padding="16dp"
     android:fillViewport="true">
 
     <LinearLayout
@@ -12,7 +12,6 @@
         android:orientation="vertical"
         android:gravity="center"
         android:layout_gravity="center"
-        android:padding="16dp"
         android:background="@drawable/dialog_water_analysis_background">
 
         <TextView
@@ -124,11 +123,12 @@
             android:id="@+id/okButton"
             android:layout_width="100dp"
             android:layout_height="40dp"
-            android:layout_marginTop="100dp"
             android:layout_gravity="center"
+            android:layout_marginTop="100dp"
+            android:background="@drawable/rounded_button"
             android:text="Done"
-            android:textSize="14sp"
             android:textColor="@color/white"
-            android:background="@drawable/rounded_button" />
+            android:textSize="14sp"
+            tools:ignore="TouchTargetSizeCheck" />
     </LinearLayout>
 </ScrollView>

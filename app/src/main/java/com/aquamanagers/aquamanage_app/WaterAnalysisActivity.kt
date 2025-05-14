@@ -3,6 +3,7 @@
 package com.aquamanagers.aquamanage_app
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -55,10 +56,34 @@ class WaterAnalysisActivity : AppCompatActivity() {
 
         progressBar = binding.progressBar
         progressBar.visibility = View.GONE
+
+        binding.backButton.setOnClickListener{
+            finish()
+        }
+
+        binding.infoIcon.setOnClickListener{
+            showInformation()
+        }
     }
 
     private fun initializeFirebase() {
         userId = FirebaseAuth.getInstance().currentUser?.uid
+    }
+
+    private fun showInformation() {
+        val dialog = AlertDialog.Builder(this).create()
+        val inflater = LayoutInflater.from(this)
+        val dialogView = inflater.inflate(R.layout.dialog_information, null)
+
+        val btnDone:Button = dialogView.findViewById(R.id.btnDone)
+
+        btnDone.setOnClickListener{
+            dialog.dismiss()
+        }
+
+        dialog.setView(dialogView)
+        dialog.setCancelable(true)
+        dialog.show()
     }
 
     private fun setupDeviceFromIntent() {
