@@ -3,22 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center"
-    android:padding="16dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp"
     app:cardBackgroundColor="@color/light_blue"
-    app:cardUseCompatPadding="true"
     app:cardPreventCornerOverlap="false">
 
     <ViewFlipper
         android:id="@+id/dialogViewFlipper"
         android:layout_width="match_parent"
-        android:layout_height="220dp">
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            tools:ignore="UselessParent">
 
             <ImageView
                 android:id="@+id/treatmentSuccessImage"
@@ -50,7 +50,9 @@
                 android:background="@drawable/rounded_button"
                 android:text="@string/show_analysis"
                 android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
         </RelativeLayout>
+        <include layout="@layout/dialog_water_quality"/>
     </ViewFlipper>
 </androidx.cardview.widget.CardView>

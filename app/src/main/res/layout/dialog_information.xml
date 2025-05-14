@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="320dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:paddingStart="10dp"
-    android:paddingEnd="10dp"
-    android:paddingTop="20dp"
-    android:paddingBottom="20dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp"
     app:cardBackgroundColor="@color/light_blue"
-    app:cardUseCompatPadding="true"
     app:cardPreventCornerOverlap="false">
 
     <LinearLayout
@@ -26,7 +22,7 @@
             android:id="@+id/dialogTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Water Quality Guidelines"
+            android:text="@string/water_quality_guidelines"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/dark_blue"
@@ -37,7 +33,7 @@
             android:id="@+id/phLevel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="pH Level: 7.00 - 10.00"
+            android:text="@string/ph_recommended_value"
             android:textSize="14sp"
             android:textColor="@color/dark_blue"
             android:textStyle="bold"
@@ -48,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="A safe range indicating the water is neither too acidic nor too basic. Suitable for most non-potable uses."
+            android:text="@string/ph_description"
             android:textSize="14sp"
             android:textColor="@color/dark_blue"
             android:layout_marginBottom="8dp" />
@@ -57,7 +53,7 @@
             android:id="@+id/turbidityLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Turbidity: 0 - 5 NTU"
+            android:text="@string/turbidity_recommended_value"
             android:layout_marginTop="10dp"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -69,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="Measures water clarity. Lower NTU values mean clearer water with fewer suspended particles."
+            android:text="@string/turbidity_description"
             android:textSize="14sp"
             android:textColor="@color/dark_blue"
             android:layout_marginBottom="8dp" />
@@ -79,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Total Dissolved Solids (TDS): <1500 mg/L"
+            android:text="@string/tds_recommended_value"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/dark_blue"
@@ -90,7 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="Indicates the concentration of dissolved substances. Staying below this level helps prevent scaling and equipment damage."
+            android:text="@string/tds_description"
             android:textSize="14sp"
             android:textColor="@color/dark_blue"
             android:layout_marginBottom="12dp" />
@@ -99,12 +95,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="12dp"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginTop="0dp"
+                android:contentDescription="@string/warning_sign"
                 android:src="@drawable/warning" />
 
             <TextView
@@ -112,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
-                android:text="Note:\nThis water is safe for non-potable uses only, such as irrigation, cleaning, flushing, or industrial processes. It is not suitable for drinking or food preparation without further treatment."
+                android:text="@string/water_usage_note"
                 android:textSize="13sp"
                 android:textColor="@color/dark_blue" />
         </LinearLayout>
@@ -121,13 +119,14 @@
             android:id="@+id/btnDone"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="25dp"
             android:background="@drawable/rounded_button"
-            android:text="Got It!"
-            android:textColor="@color/white"
-            android:textSize="14sp"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="25dp"/>
+            android:text="@string/got_it"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            tools:ignore="TouchTargetSizeCheck" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

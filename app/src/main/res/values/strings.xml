@@ -99,4 +99,17 @@
     <string name="notifications">Notifications</string>
     <string name="view_details">View Details</string>
     <string name="delete_notification">Delete Notification</string>
+    <string name="history">History</string>
+    <string name="last_recognized_treatment">Last recognized treatment</string>
+    <string name="timestamp">Timestamp</string>
+    <string name="got_it">Got It!</string>
+    <string name="water_usage_note">Note:\nThis water is safe for non-potable uses only, such as irrigation, cleaning, flushing, or industrial processes. It is not suitable for drinking or food preparation without further treatment.</string>
+    <string name="warning_sign">Warning sign</string>
+    <string name="tds_description">Indicates the concentration of dissolved substances. Staying below this level helps prevent scaling and equipment damage.</string>
+    <string name="tds_recommended_value"><![CDATA[Total Dissolved Solids (TDS): <1500 mg/L]]></string>
+    <string name="turbidity_description">Measures water clarity. Lower NTU values mean clearer water with fewer suspended particles.</string>
+    <string name="turbidity_recommended_value">Turbidity: 0 - 5 NTU</string>
+    <string name="ph_description">A safe range indicating the water is neither too acidic nor too basic. Suitable for most non-potable uses.</string>
+    <string name="ph_recommended_value">pH Level: 7.00 - 10.00</string>
+    <string name="water_quality_guidelines">Water Quality Guidelines</string>
 </resources>

@@ -99,6 +99,11 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
         binding.profileName.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
+
+        binding.historyIcon.setOnClickListener{
+            val intent = Intent(this, TreatmentHistoryActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun reloadDevices() {
@@ -294,7 +299,6 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
         options.setOrientationLocked(false)
 
         scanLauncher.launch(options)
-
     }
 
     private val scanLauncher =
@@ -302,7 +306,6 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
             if (result.contents == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show()
                 setResult(RESULT_CANCELED)
-                finish()
             } else {
                 checkResult(result.contents)
             }
@@ -404,10 +407,10 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
                                                             val notificationAdmin =
                                                                 AdminNotification(
                                                                     id = customAdminNotification,
-                                                                    customId = customDeviceId,
+                                                                    customId = deviceId,
                                                                     date = formattedDate,
                                                                     time = registeredAt,
-                                                                    description = ("Device $customDeviceId added to user $customUserId")
+                                                                    description = ("Device $deviceId added to user $customUserId")
                                                                 )
                                                             adminDatabase.child(deviceId)
                                                                 .setValue(notificationAdmin)

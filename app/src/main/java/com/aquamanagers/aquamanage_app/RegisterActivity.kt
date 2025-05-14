@@ -58,7 +58,6 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
-        // Toggle password visibility
         binding.password.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 val drawableEnd = 2
@@ -74,7 +73,6 @@ class RegisterActivity : AppCompatActivity() {
             false
         }
 
-        // Toggle confirm password visibility
         binding.confirmPassword.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 val drawableEnd = 2
@@ -167,8 +165,6 @@ class RegisterActivity : AppCompatActivity() {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val customUserId = generateCustomUserId()
-                    val customAdminNotificationId = generateAdminNotificationId()
                     val firebaseUser = firebaseAuth.currentUser
                     val authUid = firebaseUser?.uid
 
@@ -177,57 +173,65 @@ class RegisterActivity : AppCompatActivity() {
                         adminDatabase =
                             FirebaseDatabase.getInstance().getReference("notificationAdmin")
                                 .child("newUsers")
-                        val createdAt = System.currentTimeMillis()
-                        val currentDate = Date()
-                        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                        val formattedDate = dateFormat.format(currentDate)
 
-                        val user = Users(
-                            firstName = firstName,
-                            middleInitial = middleInitial,
-                            lastName = lastName,
-                            email = email,
-                            customUID = customUserId,
-                            createdAt = createdAt
-                        )
+                        generateIncrementingUserId { customUserId ->
+                            val customAdminNotificationId = generateAdminNotificationId()
+                            val createdAt = System.currentTimeMillis()
+                            val currentDate = Date()
+                            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                            val formattedDate = dateFormat.format(currentDate)
 
-                        val adminNotification = AdminNotification(
-                            id = customAdminNotificationId,
-                            customId = customUserId,
-                            date = formattedDate,
-                            time = createdAt,
-                            description = "User $customUserId created"
-                        )
+                            val user = Users(
+                                firstName = firstName,
+                                middleInitial = middleInitial,
+                                lastName = lastName,
+                                email = email,
+                                customUID = customUserId,
+                                createdAt = createdAt
+                            )
 
-                        database.child(authUid).setValue(user)
-                            .addOnSuccessListener {
-                                Toast.makeText(
-                                    this,
-                                    "Registration successful. Please log in.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                adminDatabase.child(authUid).setValue(adminNotification)
-                                    .addOnSuccessListener {
-                                        //TODO
-                                    }.addOnFailureListener { e ->
-                                        Toast.makeText(
-                                            this,
-                                            "Error sending admin notification: ${e.message}",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                firebaseAuth.signOut()
+                            val adminNotification = AdminNotification(
+                                id = customAdminNotificationId,
+                                customId = customUserId,
+                                date = formattedDate,
+                                time = createdAt,
+                                description = "User $customUserId created"
+                            )
 
-                                val intent = Intent(this, RemindersActivity::class.java)
-                                intent.flags =
-                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                startActivity(intent)
-                                finish()
-                            }
-                            .addOnFailureListener {
-                                Toast.makeText(this, "Error saving user data", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
+                            database.child(authUid).setValue(user)
+                                .addOnSuccessListener {
+                                    Toast.makeText(
+                                        this,
+                                        "Registration successful. Please log in.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    adminDatabase.child(authUid).setValue(adminNotification)
+                                        .addOnSuccessListener {
+                                            //TODO
+                                        }.addOnFailureListener { e ->
+                                            Toast.makeText(
+                                                this,
+                                                "Error sending admin notification: ${e.message}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    firebaseAuth.signOut()
+
+                                    val intent = Intent(this, RemindersActivity::class.java)
+                                    intent.flags =
+                                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    startActivity(intent)
+                                    finish()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(
+                                        this,
+                                        "Error saving user data",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                        }
                     } else {
                         Toast.makeText(this, "Failed to get Auth UID", Toast.LENGTH_SHORT).show()
                     }
@@ -241,13 +245,20 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
-    private fun generateCustomUserId(): String {
-        val allowedChars = "0123456789"
-        val random = Random()
-        val length = 8
-        return (1..length)
-            .map { allowedChars[random.nextInt(allowedChars.length)] }
-            .joinToString("")
+    private fun generateIncrementingUserId(callback: (String) -> Unit) {
+        val userRef = FirebaseDatabase.getInstance().getReference("users")
+
+        userRef.orderByChild("customUID").limitToLast(1).get().addOnSuccessListener { snapshot ->
+            val lastId = snapshot.children.firstOrNull()?.child("customUID")?.value.toString()
+            val nextId = if (lastId.isNotEmpty()) {
+                (lastId.toInt()+1).toString().padStart(8,'0')
+            } else {
+                "00000001"
+            }
+            callback(nextId)
+        }.addOnFailureListener {
+            callback("000001")
+        }
     }
 
     private fun generateAdminNotificationId(): String {
