@@ -55,6 +55,10 @@ class ProfileActivity : AppCompatActivity() {
             showAvatarSelectionDialog()
         }
 
+        binding.profileImage.setOnClickListener{
+            showAvatarSelectionDialog()
+        }
+
         binding.faqsButton.setOnClickListener {
             val intent = Intent(this, FaqsActivity::class.java)
             startActivity(intent)
@@ -131,7 +135,7 @@ class ProfileActivity : AppCompatActivity() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid?:return
         val avatarName = resources.getResourceEntryName(selectedAvatarResId)
 
-        FirebaseDatabase.getInstance().getReference("users")
+        FirebaseDatabase.getInstance().getReference("Users")
             .child(userId)
             .child("avatar")
             .setValue(avatarName)
