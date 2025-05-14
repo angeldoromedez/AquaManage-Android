@@ -23,7 +23,7 @@ class ProfileActivity : AppCompatActivity() {
 
         val prefs = getSharedPreferences("AppPreferences", MODE_PRIVATE)
         val savedAvatarResId = prefs.getInt("selectedAvatar", -1)
-        if(savedAvatarResId != -1)
+        if (savedAvatarResId != -1)
             binding.profileImage.setImageResource(savedAvatarResId)
 
         firebaseAuth = FirebaseAuth.getInstance()
@@ -83,7 +83,8 @@ class ProfileActivity : AppCompatActivity() {
                     Toast.makeText(this, "User data not found", Toast.LENGTH_SHORT).show()
                 }
             }.addOnFailureListener { e ->
-                Toast.makeText(this, "Failed to fetch user data: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Failed to fetch user data: ${e.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
         } else {
             Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show()
@@ -92,12 +93,21 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun showAvatarSelectionDialog() {
         val avatars = listOf(
-            R.drawable.ava_a, R.drawable.ava_b, R.drawable.ava_c, R.drawable.ava_d, R.drawable.ava_e,
-            R.drawable.ava_f, R.drawable.ava_g, R.drawable.ava_h, R.drawable.ava_i, R.drawable.ava_j
+            R.drawable.ava_a,
+            R.drawable.ava_b,
+            R.drawable.ava_c,
+            R.drawable.ava_d,
+            R.drawable.ava_e,
+            R.drawable.ava_f,
+            R.drawable.ava_g,
+            R.drawable.ava_h,
+            R.drawable.ava_i,
+            R.drawable.ava_j
         )
 
         val dialogView = layoutInflater.inflate(R.layout.dialog_avatar_picker, null)
-        val recyclerView = dialogView.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.avatarRecyclerView)
+        val recyclerView =
+            dialogView.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.avatarRecyclerView)
         recyclerView.layoutManager = GridLayoutManager(this, 3)
 
         val alertDialog = android.app.AlertDialog.Builder(this)
@@ -107,12 +117,28 @@ class ProfileActivity : AppCompatActivity() {
 
         val adapter = AvatarAdapter(avatars) { selectedAvatarResId ->
             binding.profileImage.setImageResource(selectedAvatarResId)
-            val prefs = getSharedPreferences("AppPreferences", MODE_PRIVATE)
-            prefs.edit().putInt("selectedAvatar", selectedAvatarResId).apply()
+            getSharedPreferences("AppPreferences", MODE_PRIVATE)
+                .edit().putInt("selectedAvatar", selectedAvatarResId).apply()
+            updateAvatarOnServer(selectedAvatarResId)
             alertDialog.dismiss()
         }
 
         recyclerView.adapter = adapter
         alertDialog.show()
+    }
+
+    private fun updateAvatarOnServer(selectedAvatarResId: Int) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid?:return
+        val avatarName = resources.getResourceEntryName(selectedAvatarResId)
+
+        FirebaseDatabase.getInstance().getReference("users")
+            .child(userId)
+            .child("avatar")
+            .setValue(avatarName)
+            .addOnSuccessListener {
+                //
+            }.addOnFailureListener{ e->
+                Toast.makeText(this, "Error: ${e.message}",Toast.LENGTH_SHORT).show()
+            }
     }
 }
