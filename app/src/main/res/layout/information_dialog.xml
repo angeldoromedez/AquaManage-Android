@@ -29,7 +29,7 @@
             android:text="Water Quality Guidelines"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="@color/dark_blue"
             android:layout_marginTop="25dp"
             android:layout_marginBottom="25dp" />
 
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:text="pH Level: 7.00 - 10.00"
             android:textSize="14sp"
-            android:textColor="@color/black"
+            android:textColor="@color/dark_blue"
             android:textStyle="bold"
             android:layout_marginBottom="2dp" />
 
@@ -50,7 +50,7 @@
             android:layout_marginTop="5dp"
             android:text="A safe range indicating the water is neither too acidic nor too basic. Suitable for most non-potable uses."
             android:textSize="14sp"
-            android:textColor="@color/black"
+            android:textColor="@color/dark_blue"
             android:layout_marginBottom="8dp" />
 
         <TextView
@@ -61,7 +61,7 @@
             android:layout_marginTop="10dp"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="@color/dark_blue"
             android:layout_marginBottom="2dp" />
 
         <TextView
@@ -71,7 +71,7 @@
             android:layout_marginTop="5dp"
             android:text="Measures water clarity. Lower NTU values mean clearer water with fewer suspended particles."
             android:textSize="14sp"
-            android:textColor="@color/black"
+            android:textColor="@color/dark_blue"
             android:layout_marginBottom="8dp" />
 
         <TextView
@@ -82,7 +82,7 @@
             android:text="Total Dissolved Solids (TDS): <1500 mg/L"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="@color/dark_blue"
             android:layout_marginBottom="2dp" />
 
         <TextView
@@ -92,7 +92,7 @@
             android:layout_marginTop="5dp"
             android:text="Indicates the concentration of dissolved substances. Staying below this level helps prevent scaling and equipment damage."
             android:textSize="14sp"
-            android:textColor="@color/black"
+            android:textColor="@color/dark_blue"
             android:layout_marginBottom="12dp" />
 
         <LinearLayout
@@ -114,7 +114,7 @@
                 android:layout_marginStart="8dp"
                 android:text="Note:\nThis water is safe for non-potable uses only, such as irrigation, cleaning, flushing, or industrial processes. It is not suitable for drinking or food preparation without further treatment."
                 android:textSize="13sp"
-                android:textColor="@color/black" />
+                android:textColor="@color/dark_blue" />
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
