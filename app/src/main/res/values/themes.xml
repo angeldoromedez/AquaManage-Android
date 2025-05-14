@@ -7,7 +7,7 @@
 
     <style name="Theme.AquaManage_App" parent="Base.Theme.AquaManage_App" />
     <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenAnimatedIcon">@drawable/amlogo</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/app</item>
         <item name="windowSplashScreenIconBackgroundColor">@color/white</item>
         <item name="windowSplashScreenBackground">@color/white</item>
         <item name="postSplashScreenTheme">@style/Base.Theme.AquaManage_App</item>

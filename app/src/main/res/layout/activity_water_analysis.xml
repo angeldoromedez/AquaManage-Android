@@ -45,12 +45,12 @@
 
     <ImageView
         android:id="@+id/infoIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:src="@drawable/info"
         android:layout_alignBottom="@id/waterAnalysisTitle"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="20dp" />
+        android:layout_marginEnd="50dp" />
 
     <LinearLayout
         android:id="@+id/waterMetrics"
@@ -62,12 +62,12 @@
         android:gravity="center_horizontal">
 
         <androidx.cardview.widget.CardView
-            android:layout_width="105dp"
-            android:layout_height="105dp"
+            android:layout_width="115dp"
+            android:layout_height="115dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="4dp"
             android:backgroundTint="#b8dcf3"
-            android:layout_margin="5dp">
+            android:layout_margin="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -96,12 +96,12 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:layout_width="105dp"
-            android:layout_height="105dp"
+            android:layout_width="115dp"
+            android:layout_height="115dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="4dp"
             android:backgroundTint="#b8dcf3"
-            android:layout_margin="5dp">
+            android:layout_margin="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -130,12 +130,12 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:layout_width="105dp"
-            android:layout_height="105dp"
+            android:layout_width="115dp"
+            android:layout_height="115dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="4dp"
             android:backgroundTint="#b8dcf3"
-            android:layout_margin="5dp">
+            android:layout_margin="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -190,7 +190,7 @@
         android:textStyle="bold"
         android:textColor="@color/dark_blue"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="450dp"/>
+        android:layout_marginTop="450dp" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -203,7 +203,7 @@
         android:layout_below="@id/treatmentTitle"
         android:layout_centerHorizontal="true"
         android:indeterminate="true"
-        android:layout_marginTop="40dp"/>
+        android:layout_marginTop="40dp" />
 
     <LinearLayout
         android:id="@+id/buttonContainer"
@@ -241,8 +241,6 @@
             android:textSize="16sp"
             android:padding="12dp"
             app:cornerRadius="16dp" />
-
     </LinearLayout>
-
 
 </RelativeLayout>

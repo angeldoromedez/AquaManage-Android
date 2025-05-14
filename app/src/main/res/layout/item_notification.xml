@@ -4,17 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/notificationCard"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
-    android:layout_marginVertical="20dp"
-    android:background="@drawable/rounded_items">
-
+    android:layout_height="120dp"
+    android:layout_marginVertical="10dp"
+    android:background="@drawable/rounded_blue_bg">
 
     <ImageView
         android:id="@+id/notificationImage"
-        android:layout_width="100dp"
-        android:layout_height="155dp"
-        android:layout_marginHorizontal="35dp"
-        android:layout_marginVertical="20dp"
+        android:layout_width="120dp"
+        android:layout_height="160dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="10dp"
         android:contentDescription="@string/notification_image"
         android:src="@drawable/treatmentsucess"
         tools:ignore="ImageContrastCheck" />
@@ -24,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/notificationImage"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_toEndOf="@id/notificationImage"
         android:text="@string/notification_message"
         android:textSize="18sp"
@@ -37,10 +36,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/notificationMessage"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="8dp"
         android:layout_toEndOf="@id/notificationImage"
         android:text="@string/device_name"
-        android:textStyle="bold"
+        android:textSize="15sp"
         android:textColor="@color/dark_blue"/>
 
     <LinearLayout
@@ -49,8 +48,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/notificationMessage"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="7dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="5dp"
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
@@ -66,7 +65,6 @@
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:background="@drawable/rounded_white_view" />
-
     </LinearLayout>
 
     <TextView
