@@ -56,7 +56,8 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         binding.faqsButton.setOnClickListener {
-            startActivity(Intent(this, FaqsActivity::class.java))
+            val intent = Intent(this, FaqsActivity::class.java)
+            startActivity(intent)
         }
     }
 
