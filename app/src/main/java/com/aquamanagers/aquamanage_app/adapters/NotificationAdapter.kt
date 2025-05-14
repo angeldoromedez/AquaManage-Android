@@ -83,8 +83,10 @@ class NotificationAdapter(
                         .child(item.id)
                         .removeValue()
                         .addOnSuccessListener {
-                            items.removeAt(position)
-                            notifyItemRemoved(position)
+                            if(position in items.indices) {
+                                items.removeAt(position)
+                                notifyItemRemoved(position)
+                            }
                         }
                     true
                 }

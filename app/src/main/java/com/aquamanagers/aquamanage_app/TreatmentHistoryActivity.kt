@@ -1,11 +1,13 @@
+@file:Suppress("DEPRECATION")
+
 package com.aquamanagers.aquamanage_app
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aquamanagers.aquamanage_app.adapters.HistoryAdapter
 import com.aquamanagers.aquamanage_app.databinding.ActivityTreatmentHistoryBinding
-import com.aquamanagers.aquamanage_app.models.HistoryItem
 import com.aquamanagers.aquamanage_app.services.DateValueFormatter
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -30,18 +32,22 @@ class TreatmentHistoryActivity : AppCompatActivity() {
 
     private fun loadDeviceList() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        historyRef = FirebaseDatabase.getInstance().getReference("history").child(userId)
+        val registryRef = FirebaseDatabase.getInstance().getReference("registry").child(userId)
 
-        historyRef.get().addOnSuccessListener { snapshot ->
+        registryRef.get().addOnSuccessListener { snapshot ->
             val deviceList = mutableListOf<Pair<String, String>>()
-            for (deviceSnapshot in snapshot.children) {
-                val deviceId = deviceSnapshot.key ?: continue
-                val deviceName = deviceSnapshot.child("deviceName").getValue(String::class.java)
-                    ?: "Unknown Device"
+            snapshot.children.forEach { deviceSnapshot ->
+                val deviceId = deviceSnapshot.key ?: return@forEach
+                val deviceName =
+                    deviceSnapshot.child("deviceName").getValue(String::class.java)
+                        ?: "Unknown Device"
                 deviceList.add(Pair(deviceId, deviceName))
             }
-
-            setupRecyclerView(deviceList)
+            if (deviceList.isEmpty()) {
+                binding.historyRecycler.visibility = View.GONE
+            } else {
+                setupRecyclerView(deviceList)
+            }
         }
     }
 
@@ -60,48 +66,87 @@ class TreatmentHistoryActivity : AppCompatActivity() {
             .child(deviceId)
 
         historyRef.get().addOnSuccessListener { snapshot ->
+            if (!snapshot.exists()) {
+                binding.historyChart.visibility = View.GONE
+                return@addOnSuccessListener
+            }
+
             val phEntry = ArrayList<Entry>()
             val tdsEntry = ArrayList<Entry>()
             val turbidityEntry = ArrayList<Entry>()
 
-            for (historySnapshot in snapshot.children) {
-                val history = historySnapshot.getValue(HistoryItem::class.java)
-                if (history != null) {
-                    val timeInMillis = history.timeStamp.toFloat()
-                    val phValue = history.phValue.toFloat()
-                    val tdsValue = history.tdsValue.toFloat()
-                    val turbidityValue = history.turbidityValue.toFloat()
-                    phEntry.add(Entry(timeInMillis, phValue))
-                    tdsEntry.add(Entry(timeInMillis, tdsValue))
-                    turbidityEntry.add(Entry(timeInMillis, turbidityValue))
-                }
+            snapshot.children.forEach { historySnapshot ->
+                val timeInMillis =
+                    historySnapshot.child("timeStamp").getValue(Long::class.java) ?: return@forEach
+                val phValue = historySnapshot.child("phValue").getValue(Double::class.java) ?: 0.0
+                val tdsValue = historySnapshot.child("tdsValue").getValue(Double::class.java) ?: 0.0
+                val turbidityValue =
+                    historySnapshot.child("turbidityValue").getValue(Double::class.java) ?: 0.0
+
+                phEntry.add(Entry(timeInMillis.toFloat(), phValue.toFloat()))
+                tdsEntry.add(Entry(timeInMillis.toFloat(), tdsValue.toFloat()))
+                turbidityEntry.add(Entry(timeInMillis.toFloat(), turbidityValue.toFloat()))
             }
 
-            setupChart(phEntry,tdsEntry, turbidityEntry)
+            if (phEntry.isNotEmpty())
+                setupChart(phEntry, tdsEntry, turbidityEntry)
+            else
+                binding.historyChart.visibility = View.GONE
         }
     }
 
-    private fun setupChart(phEntries: ArrayList<Entry>, tdsEntries: ArrayList<Entry>, turbidityEntries: ArrayList<Entry>) {
-        val phDataSet = LineDataSet(phEntries, "pH Level").apply{
-            color = resources.getColor(R.color.red)
-        }
+    private fun setupChart(
+        phEntries: ArrayList<Entry>,
+        tdsEntries: ArrayList<Entry>,
+        turbidityEntries: ArrayList<Entry>
+    ) {
+        binding.historyChart.apply {
+            clear()
+            val phDataSet = LineDataSet(phEntries, "pH Level").apply {
+                color = resources.getColor(R.color.red)
+                lineWidth = 2f
+                setDrawCircles(true)
+                setCircleColor(color)
+            }
 
-        val tdsDataSet = LineDataSet(tdsEntries, "TDS Level").apply{
-            color = resources.getColor(R.color.green)
-        }
+            val tdsDataSet = LineDataSet(tdsEntries, "TDS Level").apply {
+                color = resources.getColor(R.color.green)
+                lineWidth = 2f
+                setDrawCircles(true)
+                setCircleColor(color)
+            }
 
-        val turbidityDataSet = LineDataSet(turbidityEntries, "Turbidity Level").apply{
-            color = resources.getColor(R.color.yellow)
-        }
+            val turbidityDataSet = LineDataSet(turbidityEntries, "Turbidity Level").apply {
+                color = resources.getColor(R.color.yellow)
+                lineWidth = 2f
+                setDrawCircles(true)
+                setCircleColor(color)
+            }
 
-        val lineDataSet = LineData(phDataSet, tdsDataSet, turbidityDataSet)
-        binding.historyChart.apply{
-            data = lineData
-            description.text = "Treatment History"
-            xAxis.position = XAxis.XAxisPosition.BOTTOM
-            xAxis.valueFormatter = DateValueFormatter()
+            data = LineData(phDataSet, tdsDataSet, turbidityDataSet)
+            description.text = "Water Quality History"
+            description.textSize = 12f
+
+            xAxis.apply{
+                position = XAxis.XAxisPosition.BOTTOM
+                valueFormatter = DateValueFormatter()
+                granularity = 1f
+                labelCount = 5
+                setDrawGridLines(false)
+            }
+
+            axisLeft.apply{
+                setDrawGridLines(true)
+                axisMinimum = 0f
+                granularity = 1f
+            }
+
             axisRight.isEnabled = false
             legend.isEnabled = true
+            setTouchEnabled(true)
+            setPinchZoom(true)
+
+            animateX(1000)
             invalidate()
         }
     }
