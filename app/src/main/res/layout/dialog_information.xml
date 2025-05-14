@@ -5,6 +5,7 @@
     android:layout_width="320dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    android:background="@color/gmp_ref_palette_neutral_transparent"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp"
     app:cardBackgroundColor="@color/light_blue"
