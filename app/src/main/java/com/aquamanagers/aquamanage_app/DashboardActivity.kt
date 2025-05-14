@@ -69,11 +69,6 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val prefs = getSharedPreferences("AppPreferences", MODE_PRIVATE)
-        val savedAvatarResId = prefs.getInt("selectedAvatar", -1)
-        if (savedAvatarResId != -1)
-            binding.profileIcon.setImageResource(savedAvatarResId)
-
         recyclerView = findViewById(R.id.newDevice)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -85,6 +80,8 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
         }
 
         reloadDevices()
+        loadAvatar()
+        setupAvatarListener()
 
         binding.bellIcon.setOnClickListener {
             val intent = Intent(this, NotificationsActivity::class.java)
@@ -104,6 +101,56 @@ class DashboardActivity : AppCompatActivity(), DeviceCardAdapter.OnItemClickList
             val intent = Intent(this, TreatmentHistoryActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    @SuppressLint("DiscouragedApi")
+    private fun loadAvatar(){
+        val prefs = getSharedPreferences("AppPreferences", MODE_PRIVATE)
+        val savedAvatarResId = prefs.getInt("selectedAvatar", -1)
+        if (savedAvatarResId != -1) {
+            binding.profileIcon.setImageResource(savedAvatarResId)
+            return
+        }
+
+        val userId = FirebaseAuth.getInstance().currentUser?.uid?:return
+
+        FirebaseDatabase.getInstance().getReference("Users")
+            .child(userId)
+            .child("avatar")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val avatarName = snapshot.getValue(String::class.java) ?: return@addOnSuccessListener
+
+                val resourceId = resources.getIdentifier(avatarName, "drawable", packageName)
+                if(resourceId != 0){
+                    binding.profileIcon.setImageResource(resourceId)
+                    prefs.edit().putInt("selectedAvatar",resourceId).apply()
+                }
+            }
+    }
+
+    private fun setupAvatarListener(){
+        val userId = FirebaseAuth.getInstance().currentUser?.uid?:return
+
+        FirebaseDatabase.getInstance().getReference("Users")
+            .child(userId)
+            .child("avatar")
+            .addValueEventListener(object: ValueEventListener{
+                @SuppressLint("DiscouragedApi")
+                override fun onDataChange(snapshot: DataSnapshot){
+                    val avatarName = snapshot.getValue(String::class.java) ?: return
+                    val resourceId = resources.getIdentifier(avatarName, "drawable", packageName)
+                    if(resourceId != 0){
+                        binding.profileIcon.setImageResource(resourceId)
+                        getSharedPreferences("AppPreferences", MODE_PRIVATE).edit()
+                            .putInt("selectedAvatar", resourceId).apply()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    //
+                }
+            })
     }
 
     private fun reloadDevices() {
