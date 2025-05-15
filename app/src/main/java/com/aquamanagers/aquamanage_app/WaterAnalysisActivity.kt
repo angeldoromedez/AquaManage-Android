@@ -266,6 +266,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
             .child("progress")
             .setValue(0)
 
+        getSharedPreferences("WaterAnalysis", MODE_PRIVATE).edit().putInt("progress_$deviceId", 100).apply()
         getSharedPreferences("WaterAnalysis", MODE_PRIVATE).edit().remove("progress_$deviceId").apply()
     }
 
