@@ -53,14 +53,15 @@ class WaterAnalysisActivity : AppCompatActivity() {
         binding = ActivityWaterAnalysisBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initializeFirebase()
-        setupDeviceFromIntent()
-        setupButtons()
-
         progressBar = binding.progressBar
         progressText = binding.progressText
         progressBar.visibility = View.GONE
         progressText.visibility = View.GONE
+
+        initializeFirebase()
+        setupDeviceFromIntent()
+        setupButtons()
+        restoreProgress()
 
         binding.backButton.setOnClickListener{
             finish()
@@ -218,6 +219,9 @@ class WaterAnalysisActivity : AppCompatActivity() {
     private fun startProgressTimer() {
         val totalDuration = 20 * 60 * 1000L
         progressBar.max = 100
+        progressBar.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
+
         progressTimer = object: CountDownTimer(totalDuration, 1000){
             @SuppressLint("SetTextI18n")
             override fun onTick(millisUntilFinished: Long){
@@ -230,6 +234,8 @@ class WaterAnalysisActivity : AppCompatActivity() {
                     .child(deviceId!!)
                     .child("progress")
                     .setValue(progress)
+
+                getSharedPreferences("WaterAnalysis", MODE_PRIVATE).edit().putInt("progress_$deviceId",progress).apply()
             }
 
             @SuppressLint("SetTextI18n")
@@ -241,6 +247,9 @@ class WaterAnalysisActivity : AppCompatActivity() {
                     .child(deviceId!!)
                     .child("progress")
                     .setValue(100)
+
+                getSharedPreferences("WaterAnalysis", MODE_PRIVATE).edit().putInt("progress_$deviceId", 100).apply()
+                getSharedPreferences("WaterAnalysis", MODE_PRIVATE).edit().remove("progress_$deviceId").apply()
             }
         }
         progressTimer?.start()
@@ -256,6 +265,8 @@ class WaterAnalysisActivity : AppCompatActivity() {
             .child(deviceId!!)
             .child("progress")
             .setValue(0)
+
+        getSharedPreferences("WaterAnalysis", MODE_PRIVATE).edit().remove("progress_$deviceId").apply()
     }
 
     @SuppressLint("SetTextI18n")
@@ -282,11 +293,26 @@ class WaterAnalysisActivity : AppCompatActivity() {
             }
     }
 
+    private fun restoreProgress(){
+        val savedProgress = getSharedPreferences("WaterAnalysis", MODE_PRIVATE)
+            .getInt("progress_$deviceId", 0)
+
+        if(savedProgress>0) {
+            progressBar.visibility = View.VISIBLE
+            progressText.visibility = View.VISIBLE
+            updateProgress(savedProgress)
+        } else if(!isChecking){
+            getSharedPreferences("WaterAnalysis", MODE_PRIVATE).edit().remove("progress_$deviceId").apply()
+        }
+    }
+
     private fun updateRecyclerViewProgress(progress: Int) {
         registryRef.child("progress").setValue(progress)
     }
 
     private fun setupAnalysisMonitoring() {
+        clearRealtimeListeners()
+
         deviceRef.child("ph").get().addOnSuccessListener {
             initialPhValue = it.getValue(Double::class.java) ?: 0.0
         }
@@ -306,6 +332,7 @@ class WaterAnalysisActivity : AppCompatActivity() {
 
                 if (ph != initialPhValue || tds != initialTdsValue || turbidity != initialTurbidityValue) {
                     completeAnalysisSuccessfully()
+                    deviceRef.removeEventListener(this)
                 }
             }
 
