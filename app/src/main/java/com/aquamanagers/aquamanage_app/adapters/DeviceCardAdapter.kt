@@ -30,7 +30,6 @@ class DeviceCardAdapter(
         val turbidityValue: TextView = itemView.findViewById(R.id.turbidityValueHolder)
         val deviceName: TextView = itemView.findViewById(R.id.deviceTitleHolder)
         val progressCircular: ContentLoadingProgressBar = itemView.findViewById(R.id.progress_circular)
-        val progressCircularText: TextView = itemView.findViewById(R.id.progressText)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -52,9 +51,7 @@ class DeviceCardAdapter(
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val progress = snapshot.getValue(Int::class.java) ?: 0
-                    val progressText = "$progress%"
                     holder.progressCircular.progress = progress
-                    holder.progressCircularText.text = progressText
                 }
 
                 override fun onCancelled(error: DatabaseError) {}

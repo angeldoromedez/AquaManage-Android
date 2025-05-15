@@ -47,11 +47,11 @@ class NotificationAdapter(
         else
             holder.timestampView.text = "No timestamp"
 
-            try {
-                holder.view.setBackgroundColor(Color.parseColor(item.colorHex))
-            } catch (e: IllegalArgumentException) {
-                holder.view.setBackgroundColor(Color.parseColor("#584ea8e1"))
-            }
+        try {
+            holder.view.setBackgroundColor(Color.parseColor(item.colorHex))
+        } catch (e: IllegalArgumentException) {
+            holder.view.setBackgroundColor(Color.parseColor("#584ea8e1"))
+        }
 
         holder.menuView.setOnClickListener {
             showFloatingMenu(item, it, holder.adapterPosition)
@@ -96,10 +96,7 @@ class NotificationAdapter(
                         .child(item.id)
                         .removeValue()
                         .addOnSuccessListener {
-                            if (position in items.indices) {
-                                items.removeAt(position)
-                                notifyItemRemoved(position)
-                            }
+                            items.remove(item)
                         }
                     true
                 }

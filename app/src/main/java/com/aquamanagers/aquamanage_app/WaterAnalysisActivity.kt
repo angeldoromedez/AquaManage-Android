@@ -438,11 +438,22 @@ class WaterAnalysisActivity : AppCompatActivity() {
             val tdsTextView: TextView = dialogView.findViewById(R.id.tdsValueAnalysis)
             val turbidityTextView: TextView = dialogView.findViewById(R.id.turbidityValueAnalysis)
             val okButton: Button = dialogView.findViewById(R.id.okButton)
+            val usagesTextView: TextView = dialogView.findViewById(R.id.usagesText)
+            val usages: String
 
             dialog.setView(dialogView)
             dialog.setCancelable(true)
             dialog.show()
 
+            if(ph in 7.0..10.0 && turbidity<5 && tds<1500) {
+                usages = getString(R.string.useful_water_uses)
+                showRandomizedImage(dialogView)
+            } else{
+                usages = getString(R.string.harmful_water)
+                showWarningImage(dialogView)
+            }
+
+            usagesTextView.text = usages
             okButton.setOnClickListener {
                 dialog.dismiss()
             }

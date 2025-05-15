@@ -67,6 +67,7 @@ class NotificationsActivity : AppCompatActivity() {
                         notificationList.add(it)
                     }
                 }
+                notificationList.sortByDescending { it.timeStamp }
                 adapter.notifyDataSetChanged()
             }
 
