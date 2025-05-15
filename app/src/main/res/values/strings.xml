@@ -87,7 +87,7 @@
     <string name="title">Title</string>
     <string name="push_notification_description">This is the notification description</string>
     <string name="treatment_complete_dialog_popup">Treatment complete dialog popup</string>
-    <string name="treatment_complete">TREATMENT \n COMPLETE!</string>
+    <string name="treatment_complete">TREATMENT COMPLETE!</string>
     <string name="show_analysis">Show \n Analysis</string>
     <string name="edit_device">Edit Device</string>
     <string name="color">Color:</string>
@@ -110,7 +110,7 @@
     <string name="turbidity_description">Measures water clarity. Lower NTU values mean clearer water with fewer suspended particles.</string>
     <string name="turbidity_recommended_value">Turbidity: 0 – 5 NTU</string>
     <string name="ph_description">A safe range indicating the water is neither too acidic nor too basic. Suitable for most non-potable uses.</string>
-    <string name="ph_recommended_value">pH Level: 7.00 – 10.00</string>
+    <string name="ph_recommended_value">pH Level: 6.5 – 10</string>
     <string name="water_quality_guidelines">Water Quality Guidelines</string>
     <string name="_65">65%</string>
     <string name="useful_water_uses">You have successfully treated your water! While this water is not safe for drinking, you can still use it for tasks like watering plants, flushing toilets, cleaning, or other non-potable purposes. Make the most of your treated water while conserving fresh resources.</string>
