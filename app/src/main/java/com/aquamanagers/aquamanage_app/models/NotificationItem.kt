@@ -9,6 +9,7 @@ data class NotificationItem(
     val deviceId: String = "",
     val notificationImage: Int = 0,
     val notificationName: String = "",
+    val timeStamp: Long = 0L,
     var deviceName: String = "",
     var colorHex: String = "#FFFFFF"
 ) : Parcelable {
@@ -17,6 +18,7 @@ data class NotificationItem(
         parcel.readString() ?: "",
         parcel.readInt(),
         parcel.readString() ?: "",
+        parcel.readLong(),
         parcel.readString() ?: "",
         parcel.readString() ?: "#FFFFFF"
     )
@@ -26,6 +28,7 @@ data class NotificationItem(
         parcel.writeString(deviceId)
         parcel.writeInt(notificationImage)
         parcel.writeString(notificationName)
+        parcel.writeLong(timeStamp)
         parcel.writeString(deviceName)
         parcel.writeString(colorHex)
     }
