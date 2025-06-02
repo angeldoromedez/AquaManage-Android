@@ -67,6 +67,7 @@ class NotificationsActivity : AppCompatActivity() {
                         notificationList.add(it)
                     }
                 }
+                notificationList.sortByDescending { it.timeStamp }
                 adapter.notifyDataSetChanged()
             }
 
@@ -98,6 +99,7 @@ class NotificationsActivity : AppCompatActivity() {
                     deviceId = deviceId,
                     notificationImage = R.drawable.treatmentstop,
                     notificationName = "Treatment Stopped",
+                    timeStamp = System.currentTimeMillis(),
                     deviceName = deviceName,
                     colorHex = R.color.notification_blue.toString()
                 )
@@ -186,6 +188,7 @@ class NotificationsActivity : AppCompatActivity() {
                     deviceId = deviceId,
                     notificationImage = R.drawable.treatmentsucess,
                     notificationName = "Treatment Completed",
+                    timeStamp = System.currentTimeMillis(),
                     deviceName = deviceName,
                     colorHex = R.color.notification_blue.toString()
                 )

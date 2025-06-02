@@ -101,7 +101,7 @@
             android:layout_height="150dp"
             android:layout_marginStart="16dp"
             android:src="@drawable/watering"
-            android:contentDescription="Water usage illustration" />
+            android:contentDescription="@string/water_usage_illustration" />
     </LinearLayout>
 
     <!-- Water Usages -->
@@ -118,7 +118,7 @@
 
     <!-- Lorem Ipsum -->
     <TextView
-        android:id="@+id/loremText"
+        android:id="@+id/usagesText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/usageTitle"
@@ -132,7 +132,7 @@
         android:id="@+id/okButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/loremText"
+        android:layout_below="@id/usagesText"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:background="@drawable/rounded_button"
